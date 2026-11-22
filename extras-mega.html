@@ -1,0 +1,58 @@
+﻿<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Itens extras e skills</title>
+<style>:root{--bg:#f6f6f4;--fg:#1d1f22;--mut:#5c636b;--card:#fff;--line:#dcdcd6}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15181c;--fg:#e6eaee;--mut:#9aa5b1;--card:#1d2127;--line:#2c323a}}
+:root[data-theme="dark"]{--bg:#15181c;--fg:#e6eaee;--mut:#9aa5b1;--card:#1d2127;--line:#2c323a}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,sans-serif}main{max-width:1300px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:24px;margin:0 0 6px}h2{font-size:20px;margin:30px 0 8px}p{color:var(--mut);margin:6px 0}ul,ol{margin:6px 0;padding-left:20px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin:12px 0}
+.grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}.it{margin:0;background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.it img{display:block;width:100%;height:auto}.it figcaption{padding:8px 10px;font-size:14px}</style></head><body><main>
+<h1>Itens extras do Mega e skills de área</h1>
+<p>Plano refeito (Codex, R1969), do jeito que você pediu: os itens do Mega em <b>seções próprias</b>, separadas das suas. Nada foi implementado ainda.</p>
+<h2>1. Seções novas só do Mega</h2>
+<div class="box">O jogo passa de 16 para <b>32 seções</b>. As seções 0 a 15 (as suas) ficam exatamente como estão, e nenhum item que já existe nas contas muda.</div>
+<table style="border-collapse:collapse;width:100%;font-size:15px"><tr><th style="text-align:left;border-bottom:1px solid var(--line);padding:6px">Seção</th><th style="text-align:left;border-bottom:1px solid var(--line);padding:6px">Conteúdo</th></tr>
+<tr><td style="padding:6px">16</td><td style="padding:6px">Armas do Mega</td></tr><tr><td style="padding:6px">17</td><td style="padding:6px">Escudos do Mega</td></tr><tr><td style="padding:6px">18 a 22</td><td style="padding:6px">Sets do Mega (elmo, peitoral, calça, luva, bota)</td></tr><tr><td style="padding:6px">23</td><td style="padding:6px">Asas e capas do Mega</td></tr><tr><td style="padding:6px">24 a 31</td><td style="padding:6px">Livres para o futuro</td></tr></table>
+<h2>2. Arquivo separado e liberação</h2>
+<ul><li><b>Servidor:</b> <code>ItemMega.txt</code> só com os itens do Mega; os seus continuam no <code>Item.txt</code>.</li><li><b>Client:</b> uma tabela visual separada, com o modelo, a textura e o brilho de cada item.</li><li><b>Chave de liberação:</b> você libera por item ou por lote; o que estiver bloqueado não dropa, não aparece em loja, mix ou prêmio e não pode ser criado.</li></ul>
+<h2>3. O que precisa mudar</h2>
+<ul><li><b>Banco:</b> continua com 16 bytes por item; os itens do Mega levam uma marca num campo que hoje está livre. Antes de usar, é preciso conferir numa cópia do banco se nenhum item antigo usa esse campo.</li><li><b>Rede:</b> o item ganha 1 byte (de 12 para 13), e a aparência do personagem passa de 52 para 56 bytes. O client novo entende os dois formatos.</li><li><b>GameServer, DataServer, client Unity e o site</b> (o baú web lê o mesmo formato).</li></ul>
+<h2>4. Etapas e prazo</h2>
+<ol><li>Levantamento do banco e dos formatos, numa cópia.</li><li>Novo formato do item no servidor, no client e no site, com os itens atuais comparados byte a byte.</li><li><code>ItemMega.txt</code>, tabela visual e chave; primeiro teste com 1 arma, 1 arco ou cajado, 1 escudo, 1 asa e 1 set completo.</li><li>Arte e lotes, com teste de drop, loja, baú, troca, loja pessoal, Chaos Machine e visual nos dois clients.</li></ol>
+<div class="box"><b>Prazo estimado:</b> de 17 a 31 dias úteis até o primeiro lote funcionando no Unity com o site. Para o client C++ antigo mostrar esses itens, é uma frente à parte.<br><b>Para decidir:</b> seguimos com esse plano?</div><h2>5. Skills de área do Mega em ação (32)</h2>
+<p>Maestria (3ª classe, fora da árvore) e linha Renewal, disparando em loop.</p>
+<div class="grade">
+<figure class="it"><img loading="lazy" src="sk/0723_Fire_Blow.webp" alt="Fire Blow"><figcaption><b>Fire Blow</b><br>DK · MAESTRIA (Ruud)</figcaption></figure>
+<figure class="it"><img loading="lazy" src="sk/0724_Meteor_Strike_DW.webp" alt="Meteor Strike (DW)"><figcaption><b>Meteor Strike (DW)</b><br>DW · MAESTRIA (Ruud)</figcaption></figure>
+<figure class="it"><img loading="lazy" src="sk/0725_Meteor_Storm.webp" alt="Meteor Storm"><figcaption><b>Meteor Storm</b><br>DW · MAESTRIA (Ruud)</figcaption></figure>
+<figure class="it"><img loading="lazy" src="sk/0726_Soul_Seeker.webp" alt="Soul Seeker"><figcaption><b>Soul Seeker</b><br>DW · MAESTRIA (Ruud)</figcaption></figure>
+<figure class="it"><img loading="lazy" src="sk/0729_Fire_Beast.webp" alt="Fire Beast"><figcaption><b>Fire Beast</b><br>SU · MAESTRIA (Ruud)</figcaption></figure>
+<figure class="it"><img loading="lazy" src="sk/0730_Aqua_Beast.webp" alt="Aqua Beast"><figcaption><b>Aqua Beast</b><br>SU · MAESTRIA (Ruud)</figcaption></figure>
+<figure class="it"><img loading="lazy" src="sk/0731_Ice_Blood.webp" alt="Ice Blood"><figcaption><b>Ice Blood</b><br>MG · MAESTRIA (Ruud)</figcaption></figure>
+<figure class="it"><img loading="lazy" src="sk/0732_Fire_Blood.webp" alt="Fire Blood"><figcaption><b>Fire Blood</b><br>MG · MAESTRIA (Ruud)</figcaption></figure>
+<figure class="it"><img loading="lazy" src="sk/0733_Dark_Blast.webp" alt="Dark Blast"><figcaption><b>Dark Blast</b><br>MG · MAESTRIA (Ruud)</figcaption></figure>
+<figure class="it"><img loading="lazy" src="sk/0734_Meteor_Strike_MG.webp" alt="Meteor Strike (MG)"><figcaption><b>Meteor Strike (MG)</b><br>MG · MAESTRIA (Ruud)</figcaption></figure>
+<figure class="it"><img loading="lazy" src="sk/0737_Wind_Soul.webp" alt="Wind Soul"><figcaption><b>Wind Soul</b><br>DL · MAESTRIA (Ruud)</figcaption></figure>
+<figure class="it"><img loading="lazy" src="sk/0739_Dark_Phoenix_Shot.webp" alt="Dark Phoenix Shot"><figcaption><b>Dark Phoenix Shot</b><br>RF · MAESTRIA (Ruud)</figcaption></figure>
+<figure class="it"><img loading="lazy" src="sk/0282_Spirit_Hook.webp" alt="Spirit Hook"><figcaption><b>Spirit Hook</b><br>RF · MAESTRIA (Ruud)</figcaption></figure>
+<figure class="it"><img loading="lazy" src="sk/0285_Lightning_Storm_RW.webp" alt="Lightning Storm (RW)"><figcaption><b>Lightning Storm (RW)</b><br>RW · MAESTRIA (Ruud)</figcaption></figure>
+<figure class="it"><img loading="lazy" src="sk/0288_Deathside.webp" alt="Deathside"><figcaption><b>Deathside</b><br>SU · MAESTRIA (Ruud)</figcaption></figure>
+<figure class="it"><img loading="lazy" src="sk/0294_Pierce_Attack.webp" alt="Pierce Attack"><figcaption><b>Pierce Attack</b><br>SL · MAESTRIA (Ruud)</figcaption></figure>
+<figure class="it"><img loading="lazy" src="sk/1501_Sword_Blow.webp" alt="Sword Blow"><figcaption><b>Sword Blow</b><br>DK · MAESTRIA (Renewal)</figcaption></figure>
+<figure class="it"><img loading="lazy" src="sk/1503_Solid_Protection.webp" alt="Solid Protection"><figcaption><b>Solid Protection</b><br>DK · NORMAL (Renewal Buff)</figcaption></figure>
+<figure class="it"><img loading="lazy" src="sk/2012_Chaos_Blade.webp" alt="Chaos Blade"><figcaption><b>Chaos Blade</b><br>MG · MAESTRIA (Renewal)</figcaption></figure>
+<figure class="it"><img loading="lazy" src="sk/2013_Havok_Spear.webp" alt="Havok Spear"><figcaption><b>Havok Spear</b><br>MG · MAESTRIA (Renewal)</figcaption></figure>
+<figure class="it"><img loading="lazy" src="sk/2017_Chaos_Blade_Explosion.webp" alt="Chaos Blade Explosion"><figcaption><b>Chaos Blade Explosion</b><br>MG · MAESTRIA (Renewal Proc)</figcaption></figure>
+<figure class="it"><img loading="lazy" src="sk/2018_Fire_Blood_Explosion.webp" alt="Fire Blood Explosion"><figcaption><b>Fire Blood Explosion</b><br>MG · MAESTRIA (Renewal Proc)</figcaption></figure>
+<figure class="it"><img loading="lazy" src="sk/2019_Ice_Blood_Explosion.webp" alt="Ice Blood Explosion"><figcaption><b>Ice Blood Explosion</b><br>MG · MAESTRIA (Renewal Proc)</figcaption></figure>
+<figure class="it"><img loading="lazy" src="sk/2020_Havok_Spear_Explosion.webp" alt="Havok Spear Explosion"><figcaption><b>Havok Spear Explosion</b><br>MG · MAESTRIA (Renewal Proc)</figcaption></figure>
+<figure class="it"><img loading="lazy" src="sk/2023_Raining_Arrow.webp" alt="Raining Arrow"><figcaption><b>Raining Arrow</b><br>FE · MAESTRIA (Renewal)</figcaption></figure>
+<figure class="it"><img loading="lazy" src="sk/2025_Holy_Bolt.webp" alt="Holy Bolt"><figcaption><b>Holy Bolt</b><br>FE · MAESTRIA (Renewal)</figcaption></figure>
+<figure class="it"><img loading="lazy" src="sk/2001_Dark_Plasma.webp" alt="Dark Plasma"><figcaption><b>Dark Plasma</b><br>GC · NORMAL (Renewal 2a cl.)</figcaption></figure>
+<figure class="it"><img loading="lazy" src="sk/2002_Ice_Break.webp" alt="Ice Break"><figcaption><b>Ice Break</b><br>GC · NORMAL (Renewal 1a cl.)</figcaption></figure>
+<figure class="it"><img loading="lazy" src="sk/2003_Ice_Blast.webp" alt="Ice Blast"><figcaption><b>Ice Blast</b><br>GC · MAESTRIA (Renewal 3a cl.)</figcaption></figure>
+<figure class="it"><img loading="lazy" src="sk/2004_Death_Fire.webp" alt="Death Fire"><figcaption><b>Death Fire</b><br>GC · NORMAL (Renewal 1a cl.)</figcaption></figure>
+<figure class="it"><img loading="lazy" src="sk/2005_Bursting_Flare.webp" alt="Bursting Flare"><figcaption><b>Bursting Flare</b><br>GC · MAESTRIA (Renewal 3a cl.)</figcaption></figure>
+<figure class="it"><img loading="lazy" src="sk/2006_Death_Ice.webp" alt="Death Ice"><figcaption><b>Death Ice</b><br>GC · NORMAL (Renewal 1a cl.)</figcaption></figure>
+</div>
+</main></body></html>

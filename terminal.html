@@ -1,0 +1,71 @@
+<title>Terminal UltimateMU</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* layout: um console de tela cheia; barra fixa no topo, log rolando, mais novo embaixo */
+:root{--bg:#0c0f0d;--panel:#121713;--line:#223026;--fg:#cfe3d2;--mut:#7e977f;--ok:#86dca0;--bad:#ff9886;--warn:#efc27a;--run:#cfe3d2;--day:#d9b36a;
+--mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace;color-scheme:dark}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font:14.5px/1.6 var(--mono);display:flex;flex-direction:column;overflow:hidden}
+header{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:baseline;padding-block:12px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));border-bottom:1px solid var(--line);background:var(--panel)}
+h1{font:700 15px/1.2 var(--mono);margin:0;letter-spacing:.5px}
+h1 b{color:var(--ok)}
+#st{color:var(--mut);font-size:12.5px;margin-left:auto}
+#log{flex:1;overflow-y:auto;padding-block:10px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.l{display:grid;grid-template-columns:5.2em 1fr;gap:12px;padding:3px 0;min-width:0}
+.l .h{color:var(--mut);font-variant-numeric:tabular-nums}
+.l .t{white-space:pre-wrap;word-break:break-word;min-width:0}
+.ok .t{color:var(--ok)}.bad .t{color:var(--bad)}.warn .t{color:var(--warn)}.run .t{color:var(--run)}
+.d{color:var(--day);font-weight:700;padding:14px 0 4px}
+#fim{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(14px + env(safe-area-inset-bottom,0px));font:600 13px var(--mono);background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:999px;padding:7px 14px;cursor:pointer}
+#fim:focus-visible{outline:2px solid var(--ok)}
+.cursor{display:inline-block;width:.6em;height:1.05em;background:var(--ok);vertical-align:-2px;animation:b 1s steps(1) infinite}
+@keyframes b{50%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.cursor{animation:none}}
+#abas{display:flex;gap:6px}
+#abas button{font:600 13px var(--mono);padding:5px 14px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--fg);cursor:pointer}
+#abas button.on{background:var(--ok);color:var(--bg);border-color:var(--ok)}
+#pesq{flex:1;overflow-y:auto;padding-block:12px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+#pesq .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+#pesq article{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;min-width:0}
+#pesq article>h2{margin:0 0 10px;font:700 15px var(--mono);color:var(--day)}
+#pesq .md{word-break:break-word;font-size:13.5px}
+#pesq .md h3,#pesq .md h4{color:var(--ok);margin:14px 0 6px;font-size:14px}
+#pesq .md ul{margin:4px 0;padding-left:18px}
+#pesq .md code{color:var(--warn)}
+#pesq .md p{margin:6px 0}
+</style>
+<header><h1><b>&gt;</b> UltimateMU · terminal de trabalho</h1><nav id="abas"><button class="on" data-a="log">Terminal</button><button data-a="pesq">Pesquisa dos 3</button></nav><span id="st">carregando…</span></header>
+<div id="log" aria-live="polite"></div>
+<div id="pesq" hidden><p style="color:var(--mut);margin:0 0 12px">Cada IA analisou sozinha os dados e os documentos do dia. Pergunta: como cortar pela metade o custo dos 90 personagens sem mudar nada no visual. Atualiza a cada 15 s.</p><div class="cols"><article><h2>Codex · Astra 6.2</h2><div class="md" id="p-codex"></div></article><article><h2>Antigravity</h2><div class="md" id="p-antigravity"></div></article><article><h2>Claude · Fable 5.2</h2><div class="md" id="p-fable"></div></article></div></div>
+<button id="fim" hidden>↓ mais recente</button>
+<script>
+const log=document.getElementById('log'),st=document.getElementById('st'),fim=document.getElementById('fim');
+let n=-1;
+const perto=()=>log.scrollHeight-log.scrollTop-log.clientHeight<80;
+log.addEventListener('scroll',()=>{fim.hidden=perto();});
+fim.addEventListener('click',()=>{log.scrollTop=log.scrollHeight;});
+function render(rows){
+  const colar=n<0||perto();
+  log.textContent='';let dia='';
+  rows.forEach(r=>{const q=new Date(r.quando),dd=q.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'2-digit'});
+    if(dd!==dia){dia=dd;const s=document.createElement('div');s.className='d';s.textContent='── '+dd+' ──';log.appendChild(s);}
+    const l=document.createElement('div');l.className='l '+(r.tipo||'run');
+    const h=document.createElement('span');h.className='h';h.textContent=q.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+    const t=document.createElement('span');t.className='t';t.textContent=r.texto||'';
+    l.append(h,t);log.appendChild(l);});
+  const c=document.createElement('div');c.className='l';c.innerHTML='<span class="h"></span><span><span class="cursor"></span></span>';log.appendChild(c);
+  if(colar)log.scrollTop=log.scrollHeight;
+  n=rows.length;
+  st.textContent=rows.length+' linhas · atualiza a cada 15 s · última '+(rows.length?new Date(rows[rows.length-1].quando).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):'—');
+}
+async function puxa(){
+  try{const r=await fetch('log.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;const rows=await r.json();if(rows.length!==n)render(rows);else st.textContent=st.textContent.replace(/ · sem conexão$/,'');}
+  catch(e){if(n<0)st.textContent='não consegui ler o registro; tentando de novo…';else if(!/sem conexão$/.test(st.textContent))st.textContent+=' · sem conexão';}
+}
+puxa();setInterval(puxa,15000);
+const esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+function md(t){const L=t.split(/\r?\n/);let h='',ul=false;for(const x of L){const s=esc(x).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/`([^`]+)`/g,'<code>$1</code>');if(/^\s*[-*] /.test(x)){if(!ul){h+='<ul>';ul=true}h+='<li>'+s.replace(/^\s*[-*] /,'')+'</li>';continue}if(ul){h+='</ul>';ul=false}if(/^#{1,2} /.test(x))h+='<h3>'+s.replace(/^#+ /,'')+'</h3>';else if(/^#{3,} /.test(x))h+='<h4>'+s.replace(/^#+ /,'')+'</h4>';else if(x.trim())h+='<p>'+s+'</p>'}if(ul)h+='</ul>';return h}
+async function pesq(){for(const n of ['codex','antigravity','fable']){try{const r=await fetch('pesq-'+n+'.md?t='+Date.now(),{cache:'no-store'});if(r.ok)document.getElementById('p-'+n).innerHTML=md(await r.text())}catch(e){}}}
+document.querySelectorAll('#abas button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#abas button').forEach(x=>x.classList.toggle('on',x===b));const p=b.dataset.a==='pesq';document.getElementById('pesq').hidden=!p;log.hidden=p;fim.hidden=true;if(p)pesq();}));
+pesq();setInterval(pesq,15000);
+</script>
