@@ -1,0 +1,781 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Verificação Final — UltimateMU</title>
+<style>
+:root{
+  --bg:#15181c;
+  --card:#1d2127;
+  --card-2:#232830;
+  --line:#2c323a;
+  --fg:#e6eaee;
+  --mut:#9aa5b1;
+  --accent:#3a6fd8;
+  --ok:#5fd38d;
+  --ok-bg:rgba(95,211,141,.14);
+  --ok-bd:rgba(95,211,141,.48);
+  --bad:#f27474;
+  --bad-bg:rgba(242,116,116,.14);
+  --bad-bd:rgba(242,116,116,.52);
+  --warn:#f0b35a;
+  --warn-bg:rgba(240,179,90,.14);
+  --warn-bd:rgba(240,179,90,.42);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;-webkit-text-size-adjust:100%}
+main{max-width:1360px;margin:0 auto;padding:16px 14px 56px}
+h1{font-size:22px;line-height:1.25;margin:0 0 6px}
+.lead{color:var(--mut);margin:0 0 14px;font-size:14px}
+
+.topbar{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:12px;
+  margin-bottom:14px;
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.stats{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px}
+.pill{
+  background:var(--card-2);
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:4px 10px;
+  color:var(--fg);
+  font-variant-numeric:tabular-nums;
+}
+.pill.ok{color:var(--ok);border-color:var(--ok-bd);background:var(--ok-bg)}
+.pill.bad{color:var(--bad);border-color:var(--bad-bd);background:var(--bad-bg)}
+.pill.mut{color:var(--mut)}
+.btn-clear{
+  background:#262b33;
+  color:#cfd6de;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:6px 12px;
+  font:inherit;
+  font-size:13px;
+  cursor:pointer;
+}
+.btn-clear:hover{border-color:#4a5360;color:#fff}
+
+.filters{
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:var(--bg);
+  padding:8px 0 10px;
+  margin:0 -14px 10px;
+  padding-left:14px;
+  padding-right:14px;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  gap:6px;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
+.filters button{
+  flex:none;
+  background:#262b33;
+  color:#cfd6de;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:7px 13px;
+  font:inherit;
+  font-size:14px;
+  white-space:nowrap;
+  cursor:pointer;
+}
+.filters button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+
+.area{margin:20px 0 26px}
+.area.hidden{display:none}
+.area-head{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:10px;
+  margin:0 0 10px;
+  padding-bottom:6px;
+  border-bottom:1px solid var(--line);
+}
+.area-head h2{font-size:18px;margin:0}
+.area-count{font-size:13px;color:var(--mut)}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));
+  gap:12px;
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-left:4px solid var(--line);
+  border-radius:10px;
+  padding:14px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  transition:border-color .15s ease,background-color .15s ease;
+}
+.card.is-ok{border-color:var(--ok-bd);border-left-color:var(--ok)}
+.card.is-bad{border-color:var(--bad-bd);border-left-color:var(--bad)}
+
+.card-head{display:flex;flex-direction:column;gap:4px}
+.card-title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.card h3{font-size:16px;line-height:1.3;margin:0;color:#fff}
+.cid{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px;color:var(--mut);word-break:break-all}
+.tag{
+  flex:none;
+  font-size:11px;
+  font-weight:600;
+  padding:2px 8px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:var(--card-2);
+  color:#cfd6de;
+  white-space:nowrap;
+}
+.tag.warn{color:var(--warn);border-color:var(--warn-bd);background:var(--warn-bg)}
+.tag.info{color:#8eb4ff;border-color:rgba(58,111,216,.48);background:rgba(58,111,216,.15)}
+
+.blk{font-size:14px}
+.blk-lbl{
+  display:block;
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  color:var(--mut);
+  font-weight:700;
+  margin-bottom:3px;
+}
+.blk p{margin:0;color:#dce2e8}
+.steps{margin:0;padding-left:18px;color:#dce2e8}
+.steps li{margin:3px 0}
+
+code,kbd{
+  font-family:ui-monospace,SFMono-Regular,Consolas,monospace;
+  font-size:12.5px;
+  border-radius:5px;
+  padding:1px 5px;
+}
+code{background:#12151a;border:1px solid #2b313b;color:#c9e1ff;word-break:break-word}
+kbd{background:#282e37;border:1px solid #414956;color:#f1f5f9;white-space:nowrap}
+
+.check-row{
+  margin-top:auto;
+  padding-top:10px;
+  border-top:1px solid var(--line);
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+.check-btn{
+  min-height:40px;
+  border-radius:8px;
+  border:1px solid var(--line);
+  background:var(--card-2);
+  color:#cfd6de;
+  font:inherit;
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  -webkit-tap-highlight-color:transparent;
+}
+.check-btn:hover{border-color:#4b5563;color:#fff}
+.check-btn.ok.on{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
+.check-btn.bad.on{background:var(--bad-bg);border-color:var(--bad);color:var(--bad)}
+
+.notes-box{
+  margin-top:26px;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:14px;
+  font-size:14px;
+}
+.notes-box h2{font-size:16px;margin:0 0 8px}
+.notes-box ul{margin:0;padding-left:18px;color:#cfd6de}
+.notes-box li{margin:4px 0}
+.foot{margin-top:12px;font-size:12.5px;color:var(--mut)}
+
+@media (max-width:520px){
+  main{padding:12px 10px 48px}
+  .filters{margin:0 -10px 8px;padding-left:10px;padding-right:10px}
+  h1{font-size:20px}
+  .card{padding:12px}
+}
+</style>
+</head>
+<body>
+<main>
+  <h1>Verificação final do usuário</h1>
+  <p class="lead">Lista consolidada dos casos manuais e pendências visuais/interativas para conferência direta no jogo. Nos comandos, substitua <code>&lt;char&gt;</code> pelo nome do seu personagem de teste. As marcações <b>OK / Problema</b> são apenas visuais e não ficam salvas ao recarregar.</p>
+
+  <div class="topbar">
+    <div class="stats" aria-live="polite">
+      <span class="pill">Total: <b id="st-total">0</b></span>
+      <span class="pill ok">OK: <b id="st-ok">0</b></span>
+      <span class="pill bad">Problema: <b id="st-bad">0</b></span>
+      <span class="pill mut">Faltam: <b id="st-rem">0</b></span>
+    </div>
+    <button type="button" class="btn-clear" id="btn-clear">Limpar marcações</button>
+  </div>
+
+  <div class="filters" id="filters" role="tablist" aria-label="Filtrar por área">
+    <button type="button" class="on" data-area="all">Todas</button>
+    <button type="button" data-area="abas-login">Abas / Login</button>
+    <button type="button" data-area="combate-skills">Combate / Skills</button>
+    <button type="button" data-area="eventos">Eventos</button>
+    <button type="button" data-area="npcs-lojas">NPCs / Lojas</button>
+    <button type="button" data-area="interface">Interface</button>
+    <button type="button" data-area="mapas">Mapas</button>
+    <button type="button" data-area="servidor">Servidor</button>
+  </div>
+
+  <div id="sections"></div>
+
+  <section class="notes-box">
+    <h2>Decisões já fechadas (não precisam de teste)</h2>
+    <ul>
+      <li><b>Arkania (mapa 83):</b> excluída em 24/11 — <code>gens-strife-r2063</code> removido da lista (não portar o mapa).</li>
+      <li><b>Loja VIP (janela de compra no cliente):</b> decidida em 20/11 como não usada (<code>MenuSwitch = 0</code> mantido).</li>
+      <li><b>AutoPost ao trocar personagem:</b> segue o C++ (permanece ligado).</li>
+      <li><b>Mineração e fonte do Auto Potion:</b> mantidos fora desta rodada conforme decidido em 20/11.</li>
+    </ul>
+    <p class="foot">Esta página não guarda dados em navegador/servidor e não exibe senhas, IPs ou dados de conta.</p>
+  </section>
+</main>
+
+<script>
+const AREAS = [
+  { id: "abas-login", nome: "Abas / Login" },
+  { id: "combate-skills", nome: "Combate / Skills" },
+  { id: "eventos", nome: "Eventos" },
+  { id: "npcs-lojas", nome: "NPCs / Lojas" },
+  { id: "interface", nome: "Interface" },
+  { id: "mapas", nome: "Mapas" },
+  { id: "servidor", nome: "Servidor" }
+];
+
+const CASOS = [
+  // ── ABAS / LOGIN ──
+  {
+    area: "abas-login",
+    id: "abas-sessao",
+    titulo: "Abas: foco, estabilidade, Opções e arraste",
+    verificar: "Estabilidade da janela do jogo dentro da primeira aba, resposta dos atalhos e arraste de item dentro da bolsa.",
+    roteiro: [
+      "Entre no mundo pela primeira aba e aguarde cerca de 5 s sem mexer.",
+      "Pressione <kbd>V</kbd> para abrir e fechar o inventário.",
+      "Pressione <kbd>Esc</kbd>, clique em <b>Opções</b> no menu e feche com <kbd>Esc</kbd>.",
+      "Reabra com <kbd>V</kbd> e arraste uma poção 1×1 para uma célula livre da própria bolsa."
+    ],
+    esperado: "A área do jogo fica estável (sem tremer ou redimensionar sozinha), <kbd>V</kbd> e <kbd>Esc</kbd> funcionam na aba, Opções abre/fecha e a poção permanece na nova célula."
+  },
+
+  // ── COMBATE / SKILLS ──
+  {
+    area: "combate-skills",
+    id: "bk-combo-r1592",
+    titulo: "BK Combo real com DK",
+    verificar: "Sequência de 3 skills do Dark Knight gerando impacto de combo em monstro vivo.",
+    roteiro: [
+      "Use um DK com <b>Death Stab (43)</b>, <b>Twisting Slash (41)</b> e <b>Rageful Blow (42)</b> na barra de atalhos.",
+      "Vá a Aida com <code>/gmove &lt;char&gt; 33 22 115</code> (ou <code>/move aida</code>) e saia da zona segura.",
+      "Encoste em um Bloody Golem (≤ 2 tiles), mantenha o cursor nele, segure o <b>botão direito</b> e aperte rapidamente os 3 atalhos na ordem <code>43 → 41 → 42</code>; solte o botão.",
+      "Volte à cidade com <code>/gmove &lt;char&gt; 0 147 139</code>."
+    ],
+    esperado: "As três skills disparam em sequência no mesmo alvo, surge o efeito visual do Combo e o dano adicional de combo é aplicado."
+  },
+  {
+    area: "combate-skills",
+    id: "farm-lich-basico-skill-r2060",
+    titulo: "Lorencia: ataque básico e Twisting Slash em Lich",
+    verificar: "Dano de ataque básico e de Twisting Slash (41) em Lich vivo fora da zona segura.",
+    roteiro: [
+      "Vá para fora da safezone de Lorencia com <code>/gmove &lt;char&gt; 0 95 187</code>.",
+      "Mire em um Lich vivo e dê um <b>ataque básico</b> (clique esquerdo).",
+      "Selecione <b>Twisting Slash (41)</b> na barra, encoste em um Lich vivo (≤ 2 tiles) e lance a skill com o <b>botão direito</b>.",
+      "Volte à cidade com <code>/gmove &lt;char&gt; 0 147 139</code>."
+    ],
+    esperado: "Tanto o ataque básico quanto o Twisting Slash acertam o Lich mirado com dano visível (ou abate) sem perder cliques."
+  },
+  {
+    area: "combate-skills",
+    id: "duel-watch-3clientes-r1655",
+    titulo: "Assistir duelo (3 clientes)",
+    tag: "3 clientes",
+    tagTipo: "info",
+    verificar: "Entrada de espectador pelo Titus, placar por 20 s+, saída pelo botão Sair com duelo ativo e saída automática no fim do duelo.",
+    roteiro: [
+      "Abra 3 clientes na Sala 01. Nos clientes 1 e 2 em Lorencia (<code>/gmove &lt;char1&gt; 0 147 139</code> e <code>148 139</code>), aperte <kbd>K</kbd> → <b>Duelar</b>, clique no adversário e aceite.",
+      "No cliente 3, vá a Vulcanus (<code>/move vulcanus</code>), clique no <b>Titus (NPC 479)</b> e escolha a sala dos dois duelistas.",
+      "Confira o placar por pelo menos <b>20 s</b> com o duelo rolando e clique em <b>Sair</b>.",
+      "Reentre como espectador e encerre o duelo em um dos duelistas."
+    ],
+    esperado: "Janela do Titus fecha ao entrar; o placar exibe os dois nomes e o espectador assiste invisível; <b>Sair</b> devolve só o espectador ao mapa de origem sem efeitos presos (duelistas seguem na arena); encerrar o duelo também tira o espectador."
+  },
+  {
+    area: "combate-skills",
+    id: "mira-tps-pergunta",
+    titulo: "Mira em câmera TPS (igualada ao C++)",
+    tag: "Pergunta 20/11",
+    tagTipo: "info",
+    verificar: "Confirmar em jogo que a mira TPS (ajustada ao padrão do C++) seleciona monstros e NPCs confortavelmente.",
+    roteiro: [
+      "Em Lorencia, ative a câmera <b>TPS</b> (botão da barra lateral ou em Settings → GAME).",
+      "Teste clicar em um NPC na cidade e depois saia da safezone (<code>/gmove &lt;char&gt; 0 95 187</code>) para mirar e atacar monstros.",
+      "Volte à câmera isométrica se preferir."
+    ],
+    esperado: "A mira seleciona monstros e NPCs no ponto esperado sem sensação de desalinhamento em relação ao cliente C++."
+  },
+
+  // ── EVENTOS ──
+  {
+    area: "eventos",
+    id: "blood-castle-completa-r1711",
+    titulo: "Blood Castle — partida completa",
+    verificar: "Entrada, metas das duas ondas, portão, estátua, devolução da arma ao Archangel e vitória com XP.",
+    roteiro: [
+      "Com ingresso de Blood Castle no inventário, vá a Devias com <code>/gmove &lt;char&gt; 2 213 62</code>.",
+      "No horário do evento (ou com comando GM de início), clique no <b>NPC 233</b> e entre.",
+      "Complete a 1ª onda, destrua o <b>portão</b> em <code>(14,75)</code>, mate os 2 monstros da 2ª onda (HUD <code>0/2 → 2/2</code>), quebre a <b>estátua</b> perto de <code>(14,95)</code>, pegue a arma e entregue ao <b>Archangel (NPC 232)</b>."
+    ],
+    esperado: "Ponte libera após a 1ª onda, HUD conta corretamente, a entrega encerra com tela de vitória própria + XP recebido e o retorno à cidade funciona."
+  },
+  {
+    area: "eventos",
+    id: "chaos-castle-completa-r1711",
+    titulo: "Chaos Castle — partida completa",
+    verificar: "Entrada pela Armadura da Guarda, eliminação dos monstros sem morrer e vitória com XP.",
+    roteiro: [
+      "Em Lorencia (<code>/gmove &lt;char&gt; 0 147 139</code>), tenha a <b>Armadura da Guarda (13/29)</b> da sua faixa na bolsa.",
+      "No horário de inscrição, clique com o <b>botão direito</b> no ingresso e confirme na janela.",
+      "Elimine todos os monstros restantes na arena antes do tempo zerar (em partida solo, contador de atores deve chegar a 1)."
+    ],
+    esperado: "A arena e as quedas de piso funcionam normalmente; ao restar apenas você vivo, aparece o placar de vitória com crédito de XP e retorno a Lorencia."
+  },
+  {
+    area: "eventos",
+    id: "devil-square-completa-r1711",
+    titulo: "Devil Square — partida completa",
+    tag: "Evento longo",
+    tagTipo: "warn",
+    verificar: "Entrada via Charon, combate nas ondas até o fim da partida e resultado final com XP.",
+    roteiro: [
+      "Com convite da faixa 1 a 4 no inventário, vá a Noria com <code>/gmove &lt;char&gt; 3 171 103</code>.",
+      "No horário de inscrição, clique em <b>Charon (NPC 237)</b> e entre na sala.",
+      "Combata as ondas de monstros durante a partida até o tempo encerrar."
+    ],
+    esperado: "Relógio e ondas correm normalmente, monstros levam dano, e ao encerrar o placar mostra sua pontuação/XP positivo com saída limpa."
+  },
+  {
+    area: "eventos",
+    id: "illusion-temple-completa-r1711",
+    titulo: "Illusion Temple — partida completa",
+    tag: "2 clientes · longo",
+    tagTipo: "warn",
+    verificar: "Entrada de 2 personagens, equipes, skill Protection (Shift), relíquia, placar e resgate.",
+    roteiro: [
+      "Com 2 personagens na mesma faixa e convite na bolsa, vá a Elbeland com <code>/gmove &lt;char&gt; 51 55 241</code> nos dois clientes.",
+      "Clique em <b>Mirage (NPC 385)</b> e entre na sala.",
+      "Combata para ganhar energia, pressione <kbd>Shift</kbd> para usar <b>Protection</b>, canalize a relíquia (~10 s) e entregue no depósito do time até pontuar.",
+      "No final, feche a janela de resultado para acionar o resgate e saia nos dois clientes."
+    ],
+    esperado: "Times, energia e placar atualizam certinho, a relíquia é coletada e entregue, o resultado mostra vencedor com XP e ambos saem sem travar."
+  },
+  {
+    area: "eventos",
+    id: "castle-siege-r1823",
+    titulo: "Castle Siege — Guardsman, HUD, catapulta e coroa",
+    tag: "Sala CS",
+    tagTipo: "info",
+    verificar: "Painel do Guardsman (castelo com dono válido ou desocupado), listas de guildas, HUD/minimapa (Tab), catapulta, portão, interruptor e coroa.",
+    roteiro: [
+      "Com o castelo em estado válido na Sala CS, vá a Valley of Loren com <code>/gmove &lt;char&gt; 30 86 59</code>.",
+      "Clique no <b>Guardsman (NPC 224)</b> e abra a aba de listas de guildas.",
+      "Durante a batalha, pressione <kbd>Tab</kbd> para alternar o HUD/minimapa do cerco.",
+      "Teste a <b>catapulta 221</b> em <code>(61,19)</code> e visite o <b>portão 277</b> <code>(93,202)</code>, o <b>interruptor 217</b> <code>(167,193)</code> e a <b>coroa 216</b> <code>(176,210)</code>; volte com <code>/gmove &lt;char&gt; 0 147 139</code>."
+    ],
+    esperado: "Guardsman abre e lista as guildas; HUD/minimapa alterna no <kbd>Tab</kbd>; catapulta dispara, retorna ao repouso e gera impacto; portão, interruptor e coroa exibem efeitos corretamente e a volta a Lorencia é limpa."
+  },
+  {
+    area: "eventos",
+    id: "kanturu-fase-principal-r1711",
+    titulo: "Kanturu — entrada e fase principal (Maya)",
+    tag: "Evento longo",
+    tagTipo: "warn",
+    verificar: "Entrada com Moonstone Pendant e combate natural na fase Maya / caminho Nightmare.",
+    roteiro: [
+      "Equipe um <b>Moonstone Pendant (13/38)</b> no slot de anel.",
+      "Vá à entrada da torre com <code>/gmove &lt;char&gt; 38 141 189</code> e clique no <b>Gateway Machine (NPC 367)</b> para entrar no mapa 39.",
+      "Combata os monstros e mãos da fase principal de Maya."
+    ],
+    esperado: "Teleporte ao mapa 39 ocorre sem bloqueio, HUD/cutscene e fases de Kanturu progridem e o combate contra os alvos naturais funciona."
+  },
+  {
+    area: "eventos",
+    id: "raklion-fase-principal-r2063",
+    titulo: "Raklion — ovos naturais e Selupan",
+    tag: "Evento longo",
+    tagTipo: "warn",
+    verificar: "Entrada na fase dos ovos, destruição dos ovos naturais e surgimento/combate contra Selupan.",
+    roteiro: [
+      "Com a fase dos ovos ativa no servidor, entre em Hatchery pelo portal ou via <code>/gmove &lt;char&gt; 58 &lt;x&gt; &lt;y&gt;</code>.",
+      "Quebre os ovos naturais até o Selupan aparecer e lute na fase principal."
+    ],
+    esperado: "Os ovos recebem dano e quebram normalmente, o Selupan surge na fase principal e o combate segue sem travar."
+  },
+  {
+    area: "eventos",
+    id: "empire-guardian-resultado-r2063",
+    titulo: "Empire Guardian — entrada, clima, fase e resultado",
+    tag: "Spawn natural",
+    tagTipo: "warn",
+    verificar: "Entrada por Jerint, clima da instância, combate natural, mapa interno 72 sem chuva e resultado final.",
+    roteiro: [
+      "Retire montaria bloqueada se estiver usando; com ingresso diário, vá a Elbeland com <code>/gmove &lt;char&gt; 51 60 238</code>.",
+      "Clique em <b>Jerint (NPC 522)</b> e entre em uma instância livre.",
+      "Combata os monstros/portões naturais; se passar pelo mapa interno 72, confira ausência de chuva; aguarde o resultado final e volte com <code>/move lorencia</code>."
+    ],
+    esperado: "Clima e relógio da instância ativam, monstros naturais aparecem e levam dano, mapa interno 72 fica sem chuva e a janela de resultado final aparece no encerramento."
+  },
+  {
+    area: "eventos",
+    id: "doppelganger-resultado-r2063",
+    titulo: "Doppelganger — entrada, fase e resultado",
+    tag: "Spawn natural",
+    tagTipo: "warn",
+    verificar: "Visual da asa de Lugard, entrada, combate contra spawn natural e janela de resultado final.",
+    roteiro: [
+      "Retire montaria bloqueada se estiver usando; com ingresso, vá a Elbeland com <code>/gmove &lt;char&gt; 51 49 214</code>.",
+      "Clique em <b>Lugard (NPC 540)</b> e entre em uma instância vazia.",
+      "Aguarde o spawn natural da fase, combata e observe a tela de resultado antes de retornar a Lorencia."
+    ],
+    esperado: "Janela de entrada abre normal, monstros nascem e recebem dano na arena e a tela de resultado aparece ao concluir ou expirar o tempo."
+  },
+
+  // ── NPCS / LOJAS ──
+  {
+    area: "npcs-lojas",
+    id: "quest-npc",
+    titulo: "Sebina the Priest — diálogo de quest",
+    verificar: "Abertura visual do diálogo de quest ao clicar na Sebina e fechamento limpo com Esc.",
+    roteiro: [
+      "Use um personagem com a quest 0 no estado inicial e vá a Devias com <code>/gmove &lt;char&gt; 2 183 33</code>.",
+      "Clique uma vez em <b>Sebina the Priest (NPC 235)</b> em <code>(183,32)</code>.",
+      "Confira o painel aberto e pressione <kbd>Esc</kbd> para fechar (não precisa aceitar a quest)."
+    ],
+    esperado: "O painel de diálogo da Sebina abre no Canvas com o texto legível e fecha imediatamente ao pressionar <kbd>Esc</kbd>."
+  },
+  {
+    area: "npcs-lojas",
+    id: "hotkeys-inventario-lojas-r1713",
+    titulo: "Hotkeys: inventário, baú (240) e loja (251)",
+    verificar: "Atalhos R/Esc e K no inventário, K com C aberto, H no baú e L/Shift+L na loja NPC.",
+    roteiro: [
+      "Em Lorencia (<code>/move lorencia</code>), abra a bolsa (<kbd>V</kbd>): aperte <kbd>R</kbd> (reparo), depois <kbd>Esc</kbd> (cancela sem fechar a bolsa) e <kbd>K</kbd> (expansão).",
+      "Feche a bolsa, abra a ficha (<kbd>C</kbd>) e pressione <kbd>K</kbd>.",
+      "Abra o <b>Baú (NPC 240)</b>, pressione <kbd>H</kbd> duas vezes e compare o painel lateral com o C++.",
+      "Feche o baú, abra a <b>Loja/Ferreiro (NPC 251)</b>, pressione <kbd>L</kbd> (modo reparo) e <kbd>Shift+L</kbd> (reparar tudo em char de teste)."
+    ],
+    esperado: "<kbd>R</kbd>/<kbd>Esc</kbd> liga/cancela reparo mantendo a bolsa aberta; <kbd>K</kbd> abre expansão na bolsa e abre Comandos com <kbd>C</kbd> aberto; no baú, <kbd>H</kbd> mantém grade e página ativas sem abrir EventTime; na loja, <kbd>L</kbd> e <kbd>Shift+L</kbd> funcionam."
+  },
+  {
+    area: "npcs-lojas",
+    id: "protocolos-guild-pshop-social-r1713",
+    titulo: "Gens — Duprian Steward (543) · Arkania excluída",
+    tag: "Condicional",
+    tagTipo: "info",
+    verificar: "Whisper, Loja Pessoal e Guild Master já passaram no automático. Só o diálogo Gens em Arkania era manual — e Arkania foi excluída em 24/11.",
+    roteiro: [
+      "<b>Nenhuma ação obrigatória agora</b> (Arkania foi descartada).",
+      "Só execute se você mover o <b>Duprian Steward (NPC 543)</b> para outro mapa: aproxime-se, clique no NPC e observe o diálogo Gens."
+    ],
+    esperado: "Apenas confirmar que Gens/Arkania permanece fora desta verificação (marque OK se estiver de acordo)."
+  },
+
+  // ── INTERFACE ──
+  {
+    area: "interface",
+    id: "companions-evol-selo-r1778",
+    titulo: "Companions: evolução e Seal of Friendship",
+    verificar: "Evolução na aba Evolução (consumo de joias/Zen e subida de estágio) e uso do Selo com ícone e tooltip.",
+    roteiro: [
+      "Em Lorencia (<code>/gmove &lt;char&gt; 0 147 139</code>), tenha montaria de teste registrada no slot 8 (nível 20, estágio 0), 3 Bless, 3 Soul e 1 <b>Seal of Friendship (14/329)</b>.",
+      "Abra Companions (<kbd>C</kbd>), vá na aba <b>Evolução</b> e clique em <b>Confirmar</b>.",
+      "Abra o inventário (<kbd>V</kbd>), clique com o <b>botão direito</b> no Selo, feche as janelas e passe o mouse no novo ícone da barra de buffs."
+    ],
+    esperado: "Estágio passa de <code>0/2</code> para <code>1/2</code> mantendo nível 20 e consumindo 3 Bless + 3 Soul + Zen; o selo é consumido e o tooltip mostra <b>Seal of Friendship</b>, nome da montaria, <b>+50%</b> EXP da montaria e ~24h."
+  },
+  {
+    area: "interface",
+    id: "ranking-f8-abas-r1791",
+    titulo: "Ranking Top (F8): abas Mensal, Semanal e Diário",
+    verificar: "Abertura com F8, mudança visual de destaque e lista nas três abas com a seta direita e fechamento com F8.",
+    roteiro: [
+      "Em Lorencia (com <kbd>F8</kbd> livre no Auto Potion), pressione <kbd>F8</kbd>.",
+      "Pressione a seta direita (<kbd>→</kbd>) três vezes: <b>Mensal → Semanal → Diário → Mensal</b>.",
+      "Pressione <kbd>F8</kbd> para fechar."
+    ],
+    esperado: "Abre em Mensal, cada toque em <kbd>→</kbd> muda claramente o destaque da aba e recarrega a lista correspondente, e <kbd>F8</kbd> fecha a janela."
+  },
+  {
+    area: "interface",
+    id: "season-reward-resgate",
+    titulo: "Season Reward (F4): resgate e persistência",
+    verificar: "Conferência visual do texto 'Resgatado' (falha anterior foi só OCR), entrega única e manutenção após relogar.",
+    roteiro: [
+      "Com personagem elegível na semana ativa, pressione <kbd>F4</kbd>.",
+      "Resgate um prêmio disponível e tente clicar para resgatar de novo.",
+      "Relogue no personagem e abra <kbd>F4</kbd> novamente."
+    ],
+    esperado: "O item/moeda é entregue uma única vez, o slot passa visualmente para <b>Resgatado</b>, não permite segundo resgate e segue como <b>Resgatado</b> após relogar."
+  },
+  {
+    area: "interface",
+    id: "settings-game-r1558",
+    titulo: "Settings — aba GAME e raio de terreno",
+    verificar: "Alternância TPS/ISO, sensibilidade da câmera, escala, chat, nomes, FPS, persistência e raio de terreno.",
+    roteiro: [
+      "Em Lorencia, abra <kbd>Esc</kbd> → <b>Settings</b> → aba <b>GAME</b> e anote os valores iniciais.",
+      "Alterne <b>TPS / ISO</b> e teste a câmera e a sensibilidade do mouse.",
+      "Altere escala da UI, visibilidade do chat, nomes e contador de FPS; observe também o raio de terreno na mesma distância de visão.",
+      "Restaure tudo ao inicial, feche Settings e reabra para conferir."
+    ],
+    esperado: "Cada controle muda o jogo imediatamente, o terreno não corta antes do esperado e todos os valores voltam certos ao restaurar e reabrir."
+  },
+  {
+    area: "interface",
+    id: "settings-video-r1558",
+    titulo: "Settings — aba VIDEO (Janela/Sem Bordas e FXAA)",
+    tag: "Condicional",
+    tagTipo: "info",
+    verificar: "Transição ida e volta Janela ↔ Sem Bordas (inclusive em monitor com resolução fora da lista) e FXAA quando disponível.",
+    roteiro: [
+      "Abra <kbd>Esc</kbd> → <b>Settings</b> → aba <b>VIDEO</b> e anote resolução e modo iniciais.",
+      "Troque entre <b>Windowed mode</b> e <b>Full Screen</b> (Sem Bordas) e depois volte ao modo e tamanho iniciais.",
+      "Observe o controle <b>FXAA</b> (bloqueado enquanto a câmera Deferred não tiver pós-processamento Mega; se estiver ativo, teste ligar/desligar)."
+    ],
+    esperado: "A alternância de modo de janela não trava nem distorce a área útil, restaura exatamente o estado inicial e o FXAA respeita sua disponibilidade real."
+  },
+  {
+    area: "interface",
+    id: "settings-graphics-r1558",
+    titulo: "Settings — aba GRAPHICS (HBAO, Bloom e filtros)",
+    tag: "Condicional",
+    tagTipo: "info",
+    verificar: "HBAO, Bloom e filtros de cor (LUT, Sharpen, Vibrance, Brightness, Contrast) quando o pós-processamento Mega estiver disponível.",
+    roteiro: [
+      "Abra <kbd>Esc</kbd> → <b>Settings</b> → aba <b>GRAPHICS</b>.",
+      "Verifique os toggles e sliders de <b>HBAO</b>, <b>Bloom</b> e filtros de cor.",
+      "Se estiverem ativos no build, altere cada toggle e intensidade, observe o efeito e restaure os valores iniciais."
+    ],
+    esperado: "Se indisponíveis em Deferred, aparecem desabilitados sem erro; se ativos, cada controle reflete na imagem e volta limpo ao restaurar."
+  },
+  {
+    area: "interface",
+    id: "painel-gm-r1697",
+    titulo: "Painel GM (Shift+O): layout, abas e comandos",
+    tag: "Sessão GM",
+    tagTipo: "info",
+    verificar: "Alinhamento igual ao Move (M), abas, rolagem, câmeras locais, /hide, modal /gmove, /setzen, /zen, /! e fechamento.",
+    roteiro: [
+      "Em sessão GM, aperte <kbd>Shift+O</kbd> e compare posição/tamanho com <kbd>M</kbd>; teste abas e rolagem.",
+      "Teste <code>/cam</code>, <code>/cam2</code>, <code>/tps</code> e alterne <code>/hide</code> duas vezes.",
+      "No modal <code>/gmove</code>, complete o prefixo com <code>&lt;char&gt; &lt;mapa&gt; &lt;x&gt; &lt;y&gt;</code> e confira ida e volta.",
+      "Teste <code>/setzen</code>, <code>/zen</code> e <code>/!</code>, restaure saldo e câmera, e feche por <b>X</b>, <b>Sair</b> e <kbd>Esc</kbd>."
+    ],
+    esperado: "Painel alinha à direita igual ao <kbd>M</kbd>, <code>/hide</code> ativa e desativa invisibilidade, <code>/gmove</code> teleporta ida e volta, saldo e aviso global respondem e os 3 modos de fechar funcionam."
+  },
+
+  // ── MAPAS ──
+  {
+    area: "mapas",
+    id: "entrada-fenrir-gscs-r2060",
+    titulo: "Fenrir vermelho na troca GS0 ↔ GS19 (30, 31 e 79)",
+    verificar: "Montaria Fenrir visível no slot 8 e controle liberado ao viajar entre Lorencia e os mapas do GSCS e voltar.",
+    roteiro: [
+      "Em Lorencia (<code>/gmove &lt;char&gt; 0 147 139</code>), equipe o <b>Fenrir vermelho</b> no slot 8.",
+      "Viaje em sequência: <code>/gmove &lt;char&gt; 30 86 59</code> → <code>/gmove &lt;char&gt; 31 64 14</code> → <code>/gmove &lt;char&gt; 79 123 138</code>.",
+      "Volte a Lorencia com <code>/gmove &lt;char&gt; 0 147 139</code> e dê alguns passos em cada parada."
+    ],
+    esperado: "Em todos os destinos (GS19 nos mapas 30, 31, 79 e retorno ao GS0), o personagem entra destravado, montado no Fenrir vermelho e com o item firme no slot 8."
+  },
+  {
+    area: "mapas",
+    id: "sons-goboid-kalima-bgm-r1612",
+    titulo: "Blood Castle 1: corvos 3D e som eCrow.wav",
+    verificar: "Corvos 3D com olhos vermelhos e emissão audível de eCrow.wav na zona segura do mapa 11.",
+    roteiro: [
+      "Confirme que áudio ambiente e efeitos estão ligados em Settings → AUDIO.",
+      "Vá à zona segura exata de Blood Castle 1 com <code>/gmove &lt;char&gt; 11 15 10</code>.",
+      "Aguarde o mapa carregar e escute alguns segundos enquanto os corvos passam perto."
+    ],
+    esperado: "O personagem aparece na zona segura <code>(15,10)</code>, os corvos 3D voam por perto e o som do corvo (<code>eCrow.wav</code>) toca claramente."
+  },
+  {
+    area: "mapas",
+    id: "ceu-tps-mapas-pergunta",
+    titulo: "Céu TPS, nuvens e névoa nos mapas",
+    tag: "Pergunta 20/11",
+    tagTipo: "info",
+    verificar: "Conferência visual na mão do céu em câmera TPS (nuvens, névoa e iluminação) nos mapas principais.",
+    roteiro: [
+      "Ative a câmera <b>TPS</b> e certifique-se de que <b>Third Person Sky</b> está ligado em Settings → GRAPHICS.",
+      "Visite cidades e mapas de interesse com <code>/move lorencia</code>, <code>/move noria</code>, <code>/move devias</code>, <code>/move atlans</code>, <code>/move aida</code> (ou <code>/gmove</code>).",
+      "Olhe para o horizonte/céu e anote se algum mapa precisa igualar exatamente ao C++."
+    ],
+    esperado: "Céu, nuvens e névoa ficam agradáveis e coerentes em TPS; se algum mapa divergir do que você prefere, marque Problema para ajustar."
+  },
+
+  // ── SERVIDOR ──
+  {
+    area: "servidor",
+    id: "helper-offline",
+    titulo: "Helper Offline (Sala 01)",
+    tag: "Conta habilitada",
+    tagTipo: "warn",
+    verificar: "Acionamento do botão OFF com conta autorizada, desconexão intencional, farm continuado no servidor e encerramento ao relogar.",
+    roteiro: [
+      "Entre na Sala 01 com uma <b>conta habilitada para Helper OFF</b> e uma skill válida selecionada no Helper.",
+      "Vá a um mapa de farm fora da zona segura, deixe o Helper online <b>parado</b> e sem loja/trade abertos.",
+      "Aperte <kbd>Z</kbd> e clique em <b>OFF</b>.",
+      "Aguarde o cliente encerrar a sessão, deixe farmando alguns instantes no servidor e depois entre novamente na mesma conta."
+    ],
+    esperado: "A sessão encerra de forma limpa após clicar em <b>OFF</b>, o personagem continua farmando/ganhando XP no servidor com o cliente fechado, e a reentrada encerra o Helper offline devolvendo o controle."
+  }
+];
+
+const estado = {}; // apenas em memória (não salva)
+const secRoot = document.getElementById("sections");
+const stTotal = document.getElementById("st-total");
+const stOk = document.getElementById("st-ok");
+const stBad = document.getElementById("st-bad");
+const stRem = document.getElementById("st-rem");
+
+function atualizarPlacar(){
+  let ok = 0, bad = 0;
+  for (const c of CASOS){
+    if (estado[c.id] === "ok") ok++;
+    else if (estado[c.id] === "bad") bad++;
+  }
+  stTotal.textContent = CASOS.length;
+  stOk.textContent = ok;
+  stBad.textContent = bad;
+  stRem.textContent = CASOS.length - ok - bad;
+}
+
+function render(){
+  secRoot.innerHTML = "";
+  for (const a of AREAS){
+    const lista = CASOS.filter(c => c.area === a.id);
+    if (!lista.length) continue;
+
+    const sec = document.createElement("section");
+    sec.className = "area";
+    sec.dataset.area = a.id;
+
+    const head = document.createElement("div");
+    head.className = "area-head";
+    head.innerHTML = `<h2>${a.nome}</h2><span class="area-count">${lista.length} ${lista.length === 1 ? "caso" : "casos"}</span>`;
+    sec.appendChild(head);
+
+    const grid = document.createElement("div");
+    grid.className = "grid";
+
+    for (const c of lista){
+      const card = document.createElement("article");
+      card.className = "card";
+      card.dataset.id = c.id;
+
+      const tagHtml = c.tag ? `<span class="tag ${c.tagTipo || ""}">${c.tag}</span>` : "";
+      const stepsHtml = c.roteiro.map(s => `<li>${s}</li>`).join("");
+
+      card.innerHTML = `
+        <div class="card-head">
+          <div class="card-title-row">
+            <h3>${c.titulo}</h3>
+            ${tagHtml}
+          </div>
+          <span class="cid">${c.id}</span>
+        </div>
+        <div class="blk">
+          <span class="blk-lbl">O que verificar</span>
+          <p>${c.verificar}</p>
+        </div>
+        <div class="blk">
+          <span class="blk-lbl">Roteiro curto</span>
+          <ol class="steps">${stepsHtml}</ol>
+        </div>
+        <div class="blk">
+          <span class="blk-lbl">O que deve acontecer</span>
+          <p>${c.esperado}</p>
+        </div>
+        <div class="check-row" role="group" aria-label="Marcação visual de ${c.titulo}">
+          <button type="button" class="check-btn ok" data-val="ok" aria-pressed="false">✓ OK</button>
+          <button type="button" class="check-btn bad" data-val="bad" aria-pressed="false">✕ Problema</button>
+        </div>
+      `;
+
+      const btns = card.querySelectorAll(".check-btn");
+      btns.forEach(btn => {
+        btn.addEventListener("click", () => {
+          const val = btn.dataset.val;
+          estado[c.id] = estado[c.id] === val ? "" : val;
+          aplicarEstadoCard(card, estado[c.id]);
+          atualizarPlacar();
+        });
+      });
+
+      grid.appendChild(card);
+    }
+
+    sec.appendChild(grid);
+    secRoot.appendChild(sec);
+  }
+  atualizarPlacar();
+}
+
+function aplicarEstadoCard(card, val){
+  card.classList.toggle("is-ok", val === "ok");
+  card.classList.toggle("is-bad", val === "bad");
+  card.querySelectorAll(".check-btn").forEach(b => {
+    const ativo = b.dataset.val === val;
+    b.classList.toggle("on", ativo);
+    b.setAttribute("aria-pressed", ativo ? "true" : "false");
+  });
+}
+
+document.getElementById("filters").addEventListener("click", e => {
+  const b = e.target.closest("button[data-area]");
+  if (!b) return;
+  const area = b.dataset.area;
+  document.querySelectorAll("#filters button").forEach(x => x.classList.toggle("on", x === b));
+  document.querySelectorAll("section.area").forEach(sec => {
+    sec.classList.toggle("hidden", area !== "all" && sec.dataset.area !== area);
+  });
+});
+
+document.getElementById("btn-clear").addEventListener("click", () => {
+  for (const k of Object.keys(estado)) delete estado[k];
+  document.querySelectorAll("article.card").forEach(card => aplicarEstadoCard(card, ""));
+  atualizarPlacar();
+});
+
+render();
+</script>
+</body>
+</html>
