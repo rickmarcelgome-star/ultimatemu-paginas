@@ -1,0 +1,17 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>FPS A/B</title>
+<style>body{margin:0;background:#15181c;color:#e6eaee;font:16px/1.5 system-ui,sans-serif}main{max-width:1400px;margin:0 auto;padding:16px}h1{font-size:22px}h2{font-size:18px;margin:24px 0 8px}p{color:#9aa5b1}table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}td,th{border-bottom:1px solid #2c323a;padding:6px 8px;text-align:right}td:first-child,th:first-child{text-align:left}.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:8px}img{width:100%;border-radius:6px;border:1px solid #2c323a}figcaption{font-size:14px;color:#9aa5b1}.ok{color:#5fd38d}</style></head><body><main>
+<h1>Versões leves de objetos distantes: antes × depois</h1>
+<p>Build r1096, mesmo ponto, mesma câmera e mesma hora. "Depois" = as 4 opções ligadas (LOD, oclusão, agrupamento do horizonte e luzes distantes baratas). Hoje estão DESLIGADAS: você aprova e eu ligo como padrão.</p>
+<table><tr><th>Lugar</th><th>FPS antes</th><th>FPS depois</th><th>Ganho</th></tr>
+<tr><td>Lorencia centro, dia</td><td>203</td><td>229</td><td class="ok">+13%</td></tr>
+<tr><td>Lorencia centro, noite</td><td>204</td><td>231</td><td class="ok">+13%</td></tr>
+<tr><td>Lorencia borda, dia</td><td>258</td><td>292</td><td class="ok">+13%</td></tr>
+<tr><td>Lorencia borda, noite</td><td>253</td><td>284</td><td class="ok">+12%</td></tr>
+<tr><td>Aida, dia</td><td>175</td><td>ver relatório</td><td class="ok">LOD +5%, luzes +6%</td></tr></table>
+<p>Ganho de cada opção sozinha em Lorencia: LOD +6 a +10%, luzes distantes +5 a +12%, agrupamento +5 a +8%, oclusão +1 a +5%.</p>
+<h2>centro-dia</h2><div class="g"><figure><img loading="lazy" src="fps-ab/base-centro-dia.jpg"><figcaption>Antes (desligado)</figcaption></figure><figure><img loading="lazy" src="fps-ab/todas-centro-dia.jpg"><figcaption>Depois (tudo ligado)</figcaption></figure></div>
+<h2>centro-noite</h2><div class="g"><figure><img loading="lazy" src="fps-ab/base-centro-noite.jpg"><figcaption>Antes (desligado)</figcaption></figure><figure><img loading="lazy" src="fps-ab/todas-centro-noite.jpg"><figcaption>Depois (tudo ligado)</figcaption></figure></div>
+<h2>borda-dia</h2><div class="g"><figure><img loading="lazy" src="fps-ab/base-borda-dia.jpg"><figcaption>Antes (desligado)</figcaption></figure><figure><img loading="lazy" src="fps-ab/todas-borda-dia.jpg"><figcaption>Depois (tudo ligado)</figcaption></figure></div>
+<h2>borda-noite</h2><div class="g"><figure><img loading="lazy" src="fps-ab/base-borda-noite.jpg"><figcaption>Antes (desligado)</figcaption></figure><figure><img loading="lazy" src="fps-ab/todas-borda-noite.jpg"><figcaption>Depois (tudo ligado)</figcaption></figure></div>
+<h2>aida-dia</h2><div class="g"><figure><img loading="lazy" src="fps-ab/base-aida-dia.jpg"><figcaption>Antes (desligado)</figcaption></figure><figure><img loading="lazy" src="fps-ab/todas-aida-dia.jpg"><figcaption>Depois (tudo ligado)</figcaption></figure></div>
+</main></body></html>
