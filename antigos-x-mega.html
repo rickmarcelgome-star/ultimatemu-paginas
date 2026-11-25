@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Antigos x Mega · 7 Cidades — UltimateMU</title>
+<style>
+:root{
+  --bg:#15181c;
+  --card:#1d2127;
+  --card-2:#232830;
+  --line:#2c323a;
+  --fg:#e6eaee;
+  --mut:#9aa5b1;
+  --accent:#3a6fd8;
+  --ok:#5fd38d;
+  --ok-bg:rgba(95,211,141,.14);
+  --ok-bd:rgba(95,211,141,.48);
+  --warn:#f0b35a;
+  --warn-bg:rgba(240,179,90,.15);
+  --warn-bd:rgba(240,179,90,.48);
+  --bad:#f27474;
+  --bad-bg:rgba(242,116,116,.15);
+  --bad-bd:rgba(242,116,116,.52);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;-webkit-text-size-adjust:100%}
+main{max-width:1420px;margin:0 auto;padding:14px 12px 56px}
+h1{font-size:21px;line-height:1.25;margin:0 0 6px}
+.lead{color:var(--mut);margin:0 0 12px;font-size:13.5px}
+.topbar{
+  background:var(--card);border:1px solid var(--line);border-radius:10px;
+  padding:11px 12px;margin-bottom:10px;display:flex;flex-wrap:wrap;
+  align-items:center;justify-content:space-between;gap:8px;
+}
+.stats{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12.5px}
+.pill{
+  background:var(--card-2);border:1px solid var(--line);border-radius:999px;
+  padding:4px 10px;color:var(--fg);font-variant-numeric:tabular-nums;white-space:nowrap;
+}
+.pill.ok{color:var(--ok);border-color:var(--ok-bd);background:var(--ok-bg)}
+.pill.warn{color:var(--warn);border-color:var(--warn-bd);background:var(--warn-bg)}
+.pill.bad{color:var(--bad);border-color:var(--bad-bd);background:var(--bad-bg)}
+.pill.mut{color:var(--mut)}
+
+.controls{
+  position:sticky;top:0;z-index:10;background:var(--bg);
+  padding:8px 12px 10px;margin:0 -12px 12px;border-bottom:1px solid var(--line);
+  display:flex;flex-direction:column;gap:7px;
+}
+.row-filters{
+  display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;align-items:center;
+}
+.row-filters button{
+  flex:none;background:#262b33;color:#cfd6de;border:1px solid var(--line);
+  border-radius:18px;padding:6px 12px;font:inherit;font-size:13px;white-space:nowrap;cursor:pointer;
+}
+.row-filters button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.row-label{font-size:11.5px;color:var(--mut);flex:none;margin-right:2px}
+
+.city-section{margin-bottom:22px}
+.city-head{
+  display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px;
+  padding:8px 2px 6px;border-bottom:1px solid var(--line);margin-bottom:10px;
+}
+.city-head h2{margin:0;font-size:18px;color:#fff}
+.city-meta{font-size:12.5px;color:var(--mut)}
+
+.cards{display:grid;grid-template-columns:1fr;gap:12px}
+.card{
+  background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);
+  border-radius:10px;padding:11px;display:flex;flex-direction:column;gap:9px;
+}
+.card.st-ok{border-left-color:var(--ok)}
+.card.st-pend{border-left-color:var(--line)}
+.card-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px}
+.card-title{font-size:15px;font-weight:700;color:#fff}
+.card-sub{font-size:12px;color:var(--mut)}
+.chips{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.chip{
+  background:var(--card-2);border:1px solid var(--line);border-radius:999px;
+  padding:2px 8px;font-size:11.5px;color:#cfd6de;font-variant-numeric:tabular-nums;
+}
+.chip.cam-cima{color:#9ec5ff;border-color:rgba(58,111,216,.55)}
+.chip.mae{color:var(--warn);border-color:var(--warn-bd)}
+
+.pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.pair.mode-flip{grid-template-columns:1fr}
+.shot-box{
+  background:#0f1216;border:1px solid var(--line);border-radius:8px;overflow:hidden;
+  display:flex;flex-direction:column;
+}
+.shot-cap{
+  display:flex;justify-content:space-between;align-items:center;gap:6px;
+  padding:5px 8px;font-size:12px;font-weight:600;background:#1a1e24;border-bottom:1px solid var(--line);
+}
+.shot-cap .tag-a{color:var(--ok)}
+.shot-cap .tag-b{color:#82b1ff}
+.shot-box img{display:block;width:100%;height:auto;cursor:zoom-in;background:#0b0e12}
+.placeholder{
+  aspect-ratio:16/9;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:12px;color:var(--mut);font-size:12.5px;gap:4px;
+}
+.placeholder b{color:#cfd6de;font-size:13px}
+.flip-bar{display:none;gap:6px;align-items:center}
+.pair.mode-flip + .flip-bar{display:flex}
+.flip-bar button{
+  flex:1;background:#262b33;color:#cfd6de;border:1px solid var(--line);
+  border-radius:8px;padding:7px 10px;font:inherit;font-size:13px;cursor:pointer;
+}
+.flip-bar button.on{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+
+details.audit-box{
+  margin-top:20px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;
+}
+details.audit-box summary{cursor:pointer;font-weight:700;font-size:15px;color:#fff}
+.audit-table-wrap{overflow-x:auto;margin-top:10px}
+table.audit{width:100%;border-collapse:collapse;font-size:12.5px}
+table.audit th,table.audit td{
+  padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;
+}
+table.audit th{color:#9ec5ff;background:var(--card-2);white-space:nowrap}
+
+.modal{
+  position:fixed;inset:0;z-index:99;background:rgba(10,12,15,.95);
+  display:none;flex-direction:column;align-items:center;justify-content:center;padding:12px;gap:8px;
+}
+.modal.open{display:flex}
+.modal-top{
+  width:100%;max-width:1280px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;
+}
+.modal-title{font-size:13.5px;color:#e6eaee;font-weight:600}
+.modal-actions{display:flex;gap:6px;flex-wrap:wrap}
+.modal-actions button{
+  background:#262b33;color:#fff;border:1px solid var(--line);border-radius:18px;
+  padding:6px 12px;font:inherit;font-size:13px;cursor:pointer;
+}
+.modal-actions button.on{background:var(--accent);border-color:var(--accent)}
+.modal img{max-width:100%;max-height:78vh;border-radius:8px;border:1px solid var(--line);object-fit:contain}
+.modal-cap{color:var(--mut);font-size:12.5px;text-align:center}
+
+@media (max-width:640px){
+  main{padding:10px 8px 48px}
+  .controls{margin:0 -8px 10px;padding:7px 8px 8px}
+  h1{font-size:18px}
+  .card{padding:9px}
+  .pair{gap:5px}
+  .shot-cap{padding:4px 6px;font-size:11px}
+}
+</style>
+</head>
+<body>
+<main>
+  <h1>Mapas antigos (Atlas) x Cenas Mega</h1>
+  <p class="lead">Comparacao lado a lado das 7 cidades ligadas do World Link · 3 pontos fixos por cidade (dentro, borda, estrada) · 2 cameras com zoom totalmente aberto (altura normal + vista de cima <code>/cam</code>). Rodada: <b>r2183</b> · Atualizado em 25/11/2026 10:09. Toque na imagem para ampliar e alternar A/B.</p>
+
+  <div class="topbar">
+    <div class="stats">
+      <span class="pill warn">Completos: 0/42</span>
+      
+      <span class="pill mut">Pendentes: 42</span>
+      <span class="pill mut">Antigos (=1): pendente</span>
+      <span class="pill mut">Mega (=0): pendente</span>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="row-filters" id="f-city">
+      <span class="row-label">Cidade:</span>
+      <button type="button" class="on" data-v="all">Todas (7)</button>
+    </div>
+    <div class="row-filters" id="f-point">
+      <span class="row-label">Ponto:</span>
+      <button type="button" class="on" data-v="all">Todos</button>
+      <button type="button" data-v="dentro">Dentro</button>
+      <button type="button" data-v="borda">Borda</button>
+      <button type="button" data-v="estrada">Estrada</button>
+    </div>
+    <div class="row-filters" id="f-cam">
+      <span class="row-label">Camera:</span>
+      <button type="button" class="on" data-v="all">Ambas</button>
+      <button type="button" data-v="normal">Altura normal</button>
+      <button type="button" data-v="cima">Vista de cima (/cam)</button>
+      <span class="row-label" style="margin-left:8px">Layout:</span>
+      <button type="button" class="on" id="btn-side">Lado a lado</button>
+      <button type="button" id="btn-flip">Alternar A/B</button>
+    </div>
+  </div>
+
+  <div id="content"></div>
+
+  <details class="audit-box">
+    <summary>Auditoria offline: o que cada cidade tem no modo antigo (Atlas) x o que falta do C++ original</summary>
+    <div class="audit-table-wrap">
+      <table class="audit">
+        <thead>
+          <tr><th>Cidade</th><th>Terreno</th><th>Texturas</th><th>Objetos</th><th>Agua</th><th>Luz</th><th>Minimapa</th></tr>
+        </thead>
+        <tbody id="audit-body"></tbody>
+      </table>
+    </div>
+  </details>
+</main>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true">
+  <div class="modal-top">
+    <div class="modal-title" id="modal-title"></div>
+    <div class="modal-actions">
+      <button type="button" id="m-antigos">Antigos (=1)</button>
+      <button type="button" id="m-mega">Mega (=0)</button>
+      <button type="button" id="m-close">Fechar</button>
+    </div>
+  </div>
+  <img id="modal-img" alt="Captura ampliada">
+  <div class="modal-cap" id="modal-cap"></div>
+</div>
+
+<script>
+const CITIES = [{"slug": "aida", "name": "Aida", "map": 33, "world": "World34", "road": 2, "audit": {"terreno": "Proprio (43.885 tiles validos, altura 0..327)", "texturas": "11 materiais proprios no Atlas (0 ausentes)", "objetos": "4.056 instancias / 74 tipos (100% do C++); faltam StreamMesh/BlendMesh/vento", "agua": "2.274 tiles (mat 38) via shader generico AtlasWater", "luz": "Lightmap 8-bit + AtlasDayCycle + 2 tipos de foco (AtlasFire); sem SourceLight float", "minimapa": "TabMap 2D/3D gerado do Atlas; sem mini_map.OZT estatico"}}, {"slug": "tarkan", "name": "Tarkan", "map": 8, "world": "World9", "road": 4, "audit": {"terreno": "Proprio (32.978 tiles validos, altura 0..382)", "texturas": "10 materiais proprios no Atlas (0 ausentes)", "objetos": "3.677 instancias / 77 tipos (100% do C++); faltam HiddenMesh (60/70) e sprites (63/64)", "agua": "515 tiles (mat 57) via AtlasWater; C++ usa velocidade 0.5x (areia/lava)", "luz": "Lightmap 8-bit + AtlasDayCycle + 2 tipos em AtlasFire; sem SourceLight float", "minimapa": "TabMap 2D/3D gerado do Atlas; sem mini_map.OZT / Minimap.bmd"}}, {"slug": "losttower", "name": "Lost Tower", "map": 4, "world": "World5", "road": 5, "audit": {"terreno": "Proprio (49.240 tiles validos, altura 0..320)", "texturas": "10 materiais proprios no Atlas (0 ausentes)", "objetos": "5.469 instancias / 38 tipos (100% do C++); faltam sprites magicos (19/20/40), UV scroll (3/4) e emissor oculto (24)", "agua": "4.687 tiles (mat 68) via AtlasWater (no C++ e o abismo animado)", "luz": "Unica das 7 com SourceLightR132 float (map4-presets.nlf); sem ciclo dia/noite (fiel ao C++) e sem AtlasFire", "minimapa": "TabMap 2D/3D gerado do Atlas; sem mini_map.OZT estatico"}}, {"slug": "kanturu", "name": "Kanturu", "map": 37, "world": "World38", "road": 9, "audit": {"terreno": "Proprio (37.130 tiles validos, altura 0..382)", "texturas": "12 materiais proprios no Atlas (0 ausentes)", "objetos": "3.748 instancias / 100 tipos (100% do C++); faltam 22 regras HiddenMesh, 138 BlendMesh e particulas", "agua": "790 tiles (mat 93) via AtlasWater generico", "luz": "Lightmap 8-bit; sem ciclo dia/noite, sem AtlasFire e sem SourceLight float", "minimapa": "TabMap 2D/3D gerado do Atlas; sem mini_map.OZT estatico"}}, {"slug": "crywolf", "name": "Crywolf", "map": 34, "world": "World35", "road": 10, "audit": {"terreno": "Proprio (48.573 tiles validos, altura 0..382)", "texturas": "11 materiais no Atlas (compartilhados com Swamp pois os tiles C++ sao identicos)", "objetos": "6.784 instancias / 76 tipos (100% do C++); faltam 107 BlendMesh, particulas/efeitos do C++", "agua": "5.811 tiles (mat 47) via AtlasWater; C++ gera particulas BITMAP_SPOT_WATER na textura 5", "luz": "Lightmap 8-bit (apenas 1 estado; C++ tem TerrainLight1/2 de evento); sem AtlasDayCycle e sem AtlasFire", "minimapa": "TabMap 2D/3D gerado do Atlas; sem mini_map.OZT estatico"}}, {"slug": "swamp", "name": "Swamp of Calmness", "map": 56, "world": "World57", "road": 3, "audit": {"terreno": "Proprio (44.683 tiles validos, altura 0..382)", "texturas": "11 materiais no Atlas (mesmo conjunto de tiles que Crywolf no C++ do usuario)", "objetos": "4.367 instancias / 84 tipos (100% do C++); faltam 41 Particle / 50 Effect / 8 HiddenMesh do C++", "agua": "10.248 tiles (mat 47) via AtlasWater generico (grande lago sem plano/reflexo dedicado)", "luz": "Lightmap 8-bit; sem AtlasDayCycle, sem AtlasFire e sem SourceLight float", "minimapa": "TabMap 2D/3D gerado do Atlas; sem mini_map.OZT estatico"}}, {"slug": "raklion", "name": "Raklion", "map": 57, "world": "World58", "road": 6, "audit": {"terreno": "Proprio (47.592 tiles validos, altura 0..382)", "texturas": "10 materiais proprios no Atlas (0 ausentes)", "objetos": "1.658 instancias / 67 tipos (100% do C++); faltam 304 BlendMesh, 37 HiddenMesh e 31 efeitos de gelo/neve", "agua": "12.290 tiles (mat 76) via AtlasWater generico (no C++ e superficie de gelo/fenda)", "luz": "Lightmap 8-bit; sem AtlasDayCycle, sem AtlasFire e sem SourceLight float", "minimapa": "TabMap 2D/3D gerado do Atlas; sem mini_map.OZT estatico"}}];
+const ITEMS = [{"id": "r2183-aida-dentro-normal", "shot_name": "r2183-aida-dentro-normal", "city_slug": "aida", "city_name": "Aida", "city_map": 33, "point_key": "dentro", "point_label": "Dentro da cidade", "point_desc": "Interior de Aida (109 objetos em R30)", "point_coord": "mapa 33 (146,199)", "cam_key": "normal", "cam_label": "Altura normal · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-aida-dentro-cima", "shot_name": "r2183-aida-dentro-cima", "city_slug": "aida", "city_name": "Aida", "city_map": 33, "point_key": "dentro", "point_label": "Dentro da cidade", "point_desc": "Interior de Aida (109 objetos em R30)", "point_coord": "mapa 33 (146,199)", "cam_key": "cima", "cam_label": "Vista de cima (/cam) · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-aida-borda-normal", "shot_name": "r2183-aida-borda-normal", "city_slug": "aida", "city_name": "Aida", "city_map": 33, "point_key": "borda", "point_label": "Borda com a estrada", "point_desc": "Entrada sul de Aida na emenda da Estrada 2", "point_coord": "mapa 33 (72,4)", "cam_key": "normal", "cam_label": "Altura normal · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-aida-borda-cima", "shot_name": "r2183-aida-borda-cima", "city_slug": "aida", "city_name": "Aida", "city_map": 33, "point_key": "borda", "point_label": "Borda com a estrada", "point_desc": "Entrada sul de Aida na emenda da Estrada 2", "point_coord": "mapa 33 (72,4)", "cam_key": "cima", "cam_label": "Vista de cima (/cam) · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-aida-estrada-normal", "shot_name": "r2183-aida-estrada-normal", "city_slug": "aida", "city_name": "Aida", "city_map": 33, "point_key": "estrada", "point_label": "Estrada olhando para a cidade", "point_desc": "Estrada 2 (quadro 151), ~7 tiles fora da borda", "point_coord": "mapa 151 (123,110)", "cam_key": "normal", "cam_label": "Altura normal · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-aida-estrada-cima", "shot_name": "r2183-aida-estrada-cima", "city_slug": "aida", "city_name": "Aida", "city_map": 33, "point_key": "estrada", "point_label": "Estrada olhando para a cidade", "point_desc": "Estrada 2 (quadro 151), ~7 tiles fora da borda", "point_coord": "mapa 151 (123,110)", "cam_key": "cima", "cam_label": "Vista de cima (/cam) · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-tarkan-dentro-normal", "shot_name": "r2183-tarkan-dentro-normal", "city_slug": "tarkan", "city_name": "Tarkan", "city_map": 8, "point_key": "dentro", "point_label": "Dentro da cidade", "point_desc": "Safezone central de Tarkan (269 objetos em R30)", "point_coord": "mapa 8 (195,62)", "cam_key": "normal", "cam_label": "Altura normal · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-tarkan-dentro-cima", "shot_name": "r2183-tarkan-dentro-cima", "city_slug": "tarkan", "city_name": "Tarkan", "city_map": 8, "point_key": "dentro", "point_label": "Dentro da cidade", "point_desc": "Safezone central de Tarkan (269 objetos em R30)", "point_coord": "mapa 8 (195,62)", "cam_key": "cima", "cam_label": "Vista de cima (/cam) · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-tarkan-borda-normal", "shot_name": "r2183-tarkan-borda-normal", "city_slug": "tarkan", "city_name": "Tarkan", "city_map": 8, "point_key": "borda", "point_label": "Borda com a estrada", "point_desc": "Entrada oeste de Tarkan na emenda da Estrada 4", "point_coord": "mapa 8 (3,209)", "cam_key": "normal", "cam_label": "Altura normal · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-tarkan-borda-cima", "shot_name": "r2183-tarkan-borda-cima", "city_slug": "tarkan", "city_name": "Tarkan", "city_map": 8, "point_key": "borda", "point_label": "Borda com a estrada", "point_desc": "Entrada oeste de Tarkan na emenda da Estrada 4", "point_coord": "mapa 8 (3,209)", "cam_key": "cima", "cam_label": "Vista de cima (/cam) · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-tarkan-estrada-normal", "shot_name": "r2183-tarkan-estrada-normal", "city_slug": "tarkan", "city_name": "Tarkan", "city_map": 8, "point_key": "estrada", "point_label": "Estrada olhando para a cidade", "point_desc": "Estrada 4 (quadro 158), ~8 tiles fora da borda", "point_coord": "mapa 158 (118,135)", "cam_key": "normal", "cam_label": "Altura normal · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-tarkan-estrada-cima", "shot_name": "r2183-tarkan-estrada-cima", "city_slug": "tarkan", "city_name": "Tarkan", "city_map": 8, "point_key": "estrada", "point_label": "Estrada olhando para a cidade", "point_desc": "Estrada 4 (quadro 158), ~8 tiles fora da borda", "point_coord": "mapa 158 (118,135)", "cam_key": "cima", "cam_label": "Vista de cima (/cam) · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-losttower-dentro-normal", "shot_name": "r2183-losttower-dentro-normal", "city_slug": "losttower", "city_name": "Lost Tower", "city_map": 4, "point_key": "dentro", "point_label": "Dentro da cidade", "point_desc": "Patio/safezone Lost Tower 1 (276 objetos em R30)", "point_coord": "mapa 4 (208,75)", "cam_key": "normal", "cam_label": "Altura normal · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-losttower-dentro-cima", "shot_name": "r2183-losttower-dentro-cima", "city_slug": "losttower", "city_name": "Lost Tower", "city_map": 4, "point_key": "dentro", "point_label": "Dentro da cidade", "point_desc": "Patio/safezone Lost Tower 1 (276 objetos em R30)", "point_coord": "mapa 4 (208,75)", "cam_key": "cima", "cam_label": "Vista de cima (/cam) · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-losttower-borda-normal", "shot_name": "r2183-losttower-borda-normal", "city_slug": "losttower", "city_name": "Lost Tower", "city_map": 4, "point_key": "borda", "point_label": "Borda com a estrada", "point_desc": "Entrada sul de Lost Tower na emenda da Estrada 5", "point_coord": "mapa 4 (165,5)", "cam_key": "normal", "cam_label": "Altura normal · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-losttower-borda-cima", "shot_name": "r2183-losttower-borda-cima", "city_slug": "losttower", "city_name": "Lost Tower", "city_map": 4, "point_key": "borda", "point_label": "Borda com a estrada", "point_desc": "Entrada sul de Lost Tower na emenda da Estrada 5", "point_coord": "mapa 4 (165,5)", "cam_key": "cima", "cam_label": "Vista de cima (/cam) · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-losttower-estrada-normal", "shot_name": "r2183-losttower-estrada-normal", "city_slug": "losttower", "city_name": "Lost Tower", "city_map": 4, "point_key": "estrada", "point_label": "Estrada olhando para a cidade", "point_desc": "Estrada 5 (quadro 162), ~9 tiles fora da borda", "point_coord": "mapa 162 (131,109)", "cam_key": "normal", "cam_label": "Altura normal · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-losttower-estrada-cima", "shot_name": "r2183-losttower-estrada-cima", "city_slug": "losttower", "city_name": "Lost Tower", "city_map": 4, "point_key": "estrada", "point_label": "Estrada olhando para a cidade", "point_desc": "Estrada 5 (quadro 162), ~9 tiles fora da borda", "point_coord": "mapa 162 (131,109)", "cam_key": "cima", "cam_label": "Vista de cima (/cam) · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-kanturu-dentro-normal", "shot_name": "r2183-kanturu-dentro-normal", "city_slug": "kanturu", "city_name": "Kanturu", "city_map": 37, "point_key": "dentro", "point_label": "Dentro da cidade", "point_desc": "Area segura/ruinas internas de Kanturu (83 objetos em R30)", "point_coord": "mapa 37 (70,187)", "cam_key": "normal", "cam_label": "Altura normal · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-kanturu-dentro-cima", "shot_name": "r2183-kanturu-dentro-cima", "city_slug": "kanturu", "city_name": "Kanturu", "city_map": 37, "point_key": "dentro", "point_label": "Dentro da cidade", "point_desc": "Area segura/ruinas internas de Kanturu (83 objetos em R30)", "point_coord": "mapa 37 (70,187)", "cam_key": "cima", "cam_label": "Vista de cima (/cam) · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-kanturu-borda-normal", "shot_name": "r2183-kanturu-borda-normal", "city_slug": "kanturu", "city_name": "Kanturu", "city_map": 37, "point_key": "borda", "point_label": "Borda com a estrada", "point_desc": "Entrada sul de Kanturu na emenda da Estrada 9", "point_coord": "mapa 37 (128,5)", "cam_key": "normal", "cam_label": "Altura normal · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-kanturu-borda-cima", "shot_name": "r2183-kanturu-borda-cima", "city_slug": "kanturu", "city_name": "Kanturu", "city_map": 37, "point_key": "borda", "point_label": "Borda com a estrada", "point_desc": "Entrada sul de Kanturu na emenda da Estrada 9", "point_coord": "mapa 37 (128,5)", "cam_key": "cima", "cam_label": "Vista de cima (/cam) · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-kanturu-estrada-normal", "shot_name": "r2183-kanturu-estrada-normal", "city_slug": "kanturu", "city_name": "Kanturu", "city_map": 37, "point_key": "estrada", "point_label": "Estrada olhando para a cidade", "point_desc": "Estrada 9 (quadro 171), ~8 tiles fora da borda", "point_coord": "mapa 171 (130,104)", "cam_key": "normal", "cam_label": "Altura normal · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-kanturu-estrada-cima", "shot_name": "r2183-kanturu-estrada-cima", "city_slug": "kanturu", "city_name": "Kanturu", "city_map": 37, "point_key": "estrada", "point_label": "Estrada olhando para a cidade", "point_desc": "Estrada 9 (quadro 171), ~8 tiles fora da borda", "point_coord": "mapa 171 (130,104)", "cam_key": "cima", "cam_label": "Vista de cima (/cam) · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-crywolf-dentro-normal", "shot_name": "r2183-crywolf-dentro-normal", "city_slug": "crywolf", "city_name": "Crywolf", "city_map": 34, "point_key": "dentro", "point_label": "Dentro da cidade", "point_desc": "Fortaleza/altar safezone de Crywolf (611 objetos em R30)", "point_coord": "mapa 34 (134,31)", "cam_key": "normal", "cam_label": "Altura normal · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-crywolf-dentro-cima", "shot_name": "r2183-crywolf-dentro-cima", "city_slug": "crywolf", "city_name": "Crywolf", "city_map": 34, "point_key": "dentro", "point_label": "Dentro da cidade", "point_desc": "Fortaleza/altar safezone de Crywolf (611 objetos em R30)", "point_coord": "mapa 34 (134,31)", "cam_key": "cima", "cam_label": "Vista de cima (/cam) · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-crywolf-borda-normal", "shot_name": "r2183-crywolf-borda-normal", "city_slug": "crywolf", "city_name": "Crywolf", "city_map": 34, "point_key": "borda", "point_label": "Borda com a estrada", "point_desc": "Entrada leste de Crywolf na emenda da Estrada 10", "point_coord": "mapa 34 (244,128)", "cam_key": "normal", "cam_label": "Altura normal · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-crywolf-borda-cima", "shot_name": "r2183-crywolf-borda-cima", "city_slug": "crywolf", "city_name": "Crywolf", "city_map": 34, "point_key": "borda", "point_label": "Borda com a estrada", "point_desc": "Entrada leste de Crywolf na emenda da Estrada 10", "point_coord": "mapa 34 (244,128)", "cam_key": "cima", "cam_label": "Vista de cima (/cam) · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-crywolf-estrada-normal", "shot_name": "r2183-crywolf-estrada-normal", "city_slug": "crywolf", "city_name": "Crywolf", "city_map": 34, "point_key": "estrada", "point_label": "Estrada olhando para a cidade", "point_desc": "Estrada 10 (quadro 176), ~11 tiles fora da borda", "point_coord": "mapa 176 (150,129)", "cam_key": "normal", "cam_label": "Altura normal · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-crywolf-estrada-cima", "shot_name": "r2183-crywolf-estrada-cima", "city_slug": "crywolf", "city_name": "Crywolf", "city_map": 34, "point_key": "estrada", "point_label": "Estrada olhando para a cidade", "point_desc": "Estrada 10 (quadro 176), ~11 tiles fora da borda", "point_coord": "mapa 176 (150,129)", "cam_key": "cima", "cam_label": "Vista de cima (/cam) · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-swamp-dentro-normal", "shot_name": "r2183-swamp-dentro-normal", "city_slug": "swamp", "city_name": "Swamp of Calmness", "city_map": 56, "point_key": "dentro", "point_label": "Dentro da cidade", "point_desc": "Safezone central de Swamp (179 objetos em R30)", "point_coord": "mapa 56 (138,108)", "cam_key": "normal", "cam_label": "Altura normal · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-swamp-dentro-cima", "shot_name": "r2183-swamp-dentro-cima", "city_slug": "swamp", "city_name": "Swamp of Calmness", "city_map": 56, "point_key": "dentro", "point_label": "Dentro da cidade", "point_desc": "Safezone central de Swamp (179 objetos em R30)", "point_coord": "mapa 56 (138,108)", "cam_key": "cima", "cam_label": "Vista de cima (/cam) · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-swamp-borda-normal", "shot_name": "r2183-swamp-borda-normal", "city_slug": "swamp", "city_name": "Swamp of Calmness", "city_map": 56, "point_key": "borda", "point_label": "Borda com a estrada", "point_desc": "Entrada oeste de Swamp na emenda da Estrada 3", "point_coord": "mapa 56 (5,176)", "cam_key": "normal", "cam_label": "Altura normal · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-swamp-borda-cima", "shot_name": "r2183-swamp-borda-cima", "city_slug": "swamp", "city_name": "Swamp of Calmness", "city_map": 56, "point_key": "borda", "point_label": "Borda com a estrada", "point_desc": "Entrada oeste de Swamp na emenda da Estrada 3", "point_coord": "mapa 56 (5,176)", "cam_key": "cima", "cam_label": "Vista de cima (/cam) · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-swamp-estrada-normal", "shot_name": "r2183-swamp-estrada-normal", "city_slug": "swamp", "city_name": "Swamp of Calmness", "city_map": 56, "point_key": "estrada", "point_label": "Estrada olhando para a cidade", "point_desc": "Estrada 3 (quadro 154), ~9 tiles fora da borda", "point_coord": "mapa 154 (109,129)", "cam_key": "normal", "cam_label": "Altura normal · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-swamp-estrada-cima", "shot_name": "r2183-swamp-estrada-cima", "city_slug": "swamp", "city_name": "Swamp of Calmness", "city_map": 56, "point_key": "estrada", "point_label": "Estrada olhando para a cidade", "point_desc": "Estrada 3 (quadro 154), ~9 tiles fora da borda", "point_coord": "mapa 154 (109,129)", "cam_key": "cima", "cam_label": "Vista de cima (/cam) · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-raklion-dentro-normal", "shot_name": "r2183-raklion-dentro-normal", "city_slug": "raklion", "city_name": "Raklion", "city_map": 57, "point_key": "dentro", "point_label": "Dentro da cidade", "point_desc": "Interior gelado central de Raklion (93 objetos em R30)", "point_coord": "mapa 57 (140,130)", "cam_key": "normal", "cam_label": "Altura normal · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-raklion-dentro-cima", "shot_name": "r2183-raklion-dentro-cima", "city_slug": "raklion", "city_name": "Raklion", "city_map": 57, "point_key": "dentro", "point_label": "Dentro da cidade", "point_desc": "Interior gelado central de Raklion (93 objetos em R30)", "point_coord": "mapa 57 (140,130)", "cam_key": "cima", "cam_label": "Vista de cima (/cam) · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-raklion-borda-normal", "shot_name": "r2183-raklion-borda-normal", "city_slug": "raklion", "city_name": "Raklion", "city_map": 57, "point_key": "borda", "point_label": "Borda com a estrada", "point_desc": "Entrada leste de Raklion na emenda da Estrada 6", "point_coord": "mapa 57 (232,216)", "cam_key": "normal", "cam_label": "Altura normal · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-raklion-borda-cima", "shot_name": "r2183-raklion-borda-cima", "city_slug": "raklion", "city_name": "Raklion", "city_map": 57, "point_key": "borda", "point_label": "Borda com a estrada", "point_desc": "Entrada leste de Raklion na emenda da Estrada 6", "point_coord": "mapa 57 (232,216)", "cam_key": "cima", "cam_label": "Vista de cima (/cam) · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-raklion-estrada-normal", "shot_name": "r2183-raklion-estrada-normal", "city_slug": "raklion", "city_name": "Raklion", "city_map": 57, "point_key": "estrada", "point_label": "Estrada olhando para a cidade", "point_desc": "Estrada 6 (quadro 165), fora da borda leste olhando para Raklion", "point_coord": "mapa 165 (148,130)", "cam_key": "normal", "cam_label": "Altura normal · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}, {"id": "r2183-raklion-estrada-cima", "shot_name": "r2183-raklion-estrada-cima", "city_slug": "raklion", "city_name": "Raklion", "city_map": 57, "point_key": "estrada", "point_label": "Estrada olhando para a cidade", "point_desc": "Estrada 6 (quadro 165), fora da borda leste olhando para Raklion", "point_coord": "mapa 165 (148,130)", "cam_key": "cima", "cam_label": "Vista de cima (/cam) · zoom aberto", "antigos": "", "mega": "", "mae_rgb": null}];
+
+const state = { city: 'all', point: 'all', cam: 'all', layout: 'side' };
+let modalItem = null, modalSide = 'antigos';
+
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+}
+
+const cityRow = document.getElementById('f-city');
+CITIES.forEach(c => {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.dataset.v = c.slug;
+  b.textContent = `${c.name} (${c.map})`;
+  cityRow.appendChild(b);
+});
+
+function bindFilter(id, key) {
+  const row = document.getElementById(id);
+  row.addEventListener('click', ev => {
+    const btn = ev.target.closest('button[data-v]');
+    if (!btn) return;
+    state[key] = btn.dataset.v;
+    row.querySelectorAll('button[data-v]').forEach(b => b.classList.toggle('on', b === btn));
+    render();
+  });
+}
+bindFilter('f-city', 'city');
+bindFilter('f-point', 'point');
+bindFilter('f-cam', 'cam');
+
+const btnSide = document.getElementById('btn-side');
+const btnFlip = document.getElementById('btn-flip');
+btnSide.onclick = () => { state.layout = 'side'; btnSide.classList.add('on'); btnFlip.classList.remove('on'); render(); };
+btnFlip.onclick = () => { state.layout = 'flip'; btnFlip.classList.add('on'); btnSide.classList.remove('on'); render(); };
+
+function shotPanel(item, side) {
+  const label = side === 'antigos' ? 'Antigos · Atlas (=1)' : 'Cenas Mega (=0)';
+  const tagCls = side === 'antigos' ? 'tag-a' : 'tag-b';
+  const src = item[side];
+  const inner = src
+    ? `<img loading="lazy" src="${esc(src)}" alt="${esc(item.city_name + ' - ' + item.point_label + ' - ' + label)}" data-id="${esc(item.id)}" data-side="${side}">`
+    : `<div class="placeholder"><b>Aguardando captura</b><span>${esc(item.shot_name)}</span></div>`;
+  return `<div class="shot-box" data-side="${side}"><div class="shot-cap"><span class="${tagCls}">${label}</span><span>${item.point_coord}</span></div>${inner}</div>`;
+}
+
+function render() {
+  const root = document.getElementById('content');
+  const filtered = ITEMS.filter(it =>
+    (state.city === 'all' || it.city_slug === state.city) &&
+    (state.point === 'all' || it.point_key === state.point) &&
+    (state.cam === 'all' || it.cam_key === state.cam)
+  );
+  const byCity = new Map();
+  filtered.forEach(it => {
+    if (!byCity.has(it.city_slug)) byCity.set(it.city_slug, []);
+    byCity.get(it.city_slug).push(it);
+  });
+  let html = '';
+  CITIES.forEach(c => {
+    const list = byCity.get(c.slug);
+    if (!list || !list.length) return;
+    html += `<section class="city-section"><div class="city-head"><h2>${esc(c.name)} <span class="city-meta">(mapa ${c.map} · ${esc(c.world)} · Estrada ${c.road})</span></h2><span class="city-meta">${list.length} par(es)</span></div><div class="cards">`;
+    list.forEach(it => {
+      const stCls = (it.antigos && it.mega) ? 'st-ok' : 'st-pend';
+      const camCls = it.cam_key === 'cima' ? 'cam-cima' : '';
+      const maeHtml = it.mae_rgb !== null ? `<span class="chip mae">MAE RGB ${it.mae_rgb.toFixed(4)}</span>` : '';
+      const flipCls = state.layout === 'flip' ? 'mode-flip' : '';
+      html += `<article class="card ${stCls}" data-card="${esc(it.id)}">
+        <div class="card-head">
+          <div>
+            <div class="card-title">${esc(it.point_label)} · ${esc(it.cam_label)}</div>
+            <div class="card-sub">${esc(it.point_desc)}</div>
+          </div>
+          <div class="chips">
+            <span class="chip">${esc(it.point_coord)}</span>
+            <span class="chip ${camCls}">${it.cam_key === 'cima' ? 'De cima (/cam)' : 'Altura normal'}</span>
+            ${maeHtml}
+          </div>
+        </div>
+        <div class="pair ${flipCls}">
+          ${shotPanel(it, 'antigos')}
+          ${shotPanel(it, 'mega')}
+        </div>
+        <div class="flip-bar">
+          <button type="button" class="on" data-show="antigos">Mostrar Antigos (=1)</button>
+          <button type="button" data-show="mega">Mostrar Mega (=0)</button>
+        </div>
+      </article>`;
+    });
+    html += `</div></section>`;
+  });
+  root.innerHTML = html || '<p class="lead">Nenhum par corresponde aos filtros atuais.</p>';
+  if (state.layout === 'flip') {
+    root.querySelectorAll('.card').forEach(card => {
+      const boxes = card.querySelectorAll('.shot-box');
+      if (boxes.length === 2) boxes[1].style.display = 'none';
+      card.querySelectorAll('.flip-bar button').forEach(btn => {
+        btn.onclick = () => {
+          const show = btn.dataset.show;
+          card.querySelectorAll('.flip-bar button').forEach(b => b.classList.toggle('on', b === btn));
+          boxes.forEach(bx => bx.style.display = bx.dataset.side === show ? '' : 'none');
+        };
+      });
+    });
+  }
+}
+
+document.getElementById('content').addEventListener('click', ev => {
+  const img = ev.target.closest('img[data-id]');
+  if (!img) return;
+  const item = ITEMS.find(x => x.id === img.dataset.id);
+  if (!item) return;
+  openModal(item, img.dataset.side || 'antigos');
+});
+
+const modal = document.getElementById('modal');
+const mImg = document.getElementById('modal-img');
+const mTitle = document.getElementById('modal-title');
+const mCap = document.getElementById('modal-cap');
+const mBtnA = document.getElementById('m-antigos');
+const mBtnB = document.getElementById('m-mega');
+
+function openModal(item, side) {
+  modalItem = item;
+  modalSide = item[side] ? side : (item.antigos ? 'antigos' : 'mega');
+  syncModal();
+  modal.classList.add('open');
+}
+function syncModal() {
+  if (!modalItem) return;
+  mTitle.textContent = `${modalItem.city_name} · ${modalItem.point_label} · ${modalItem.cam_label}`;
+  mImg.src = modalItem[modalSide] || '';
+  mBtnA.classList.toggle('on', modalSide === 'antigos');
+  mBtnB.classList.toggle('on', modalSide === 'mega');
+  mBtnA.disabled = !modalItem.antigos;
+  mBtnB.disabled = !modalItem.mega;
+  mCap.textContent = (modalSide === 'antigos' ? 'Antigos · Atlas (ROOT_WL_MAPAS_ANTIGOS_R2182=1)' : 'Cenas Mega (ROOT_WL_MAPAS_ANTIGOS_R2182=0)')
+    + ' · ' + modalItem.point_coord + (modalItem.mae_rgb !== null ? ` · MAE RGB ${modalItem.mae_rgb.toFixed(4)}` : '');
+}
+mBtnA.onclick = () => { if (modalItem && modalItem.antigos) { modalSide = 'antigos'; syncModal(); } };
+mBtnB.onclick = () => { if (modalItem && modalItem.mega) { modalSide = 'mega'; syncModal(); } };
+document.getElementById('m-close').onclick = () => modal.classList.remove('open');
+modal.addEventListener('click', ev => { if (ev.target === modal) modal.classList.remove('open'); });
+document.addEventListener('keydown', ev => {
+  if (!modal.classList.contains('open')) return;
+  if (ev.key === 'Escape') modal.classList.remove('open');
+  if (ev.key === 'ArrowLeft' || ev.key === 'ArrowRight') {
+    const next = modalSide === 'antigos' ? 'mega' : 'antigos';
+    if (modalItem && modalItem[next]) { modalSide = next; syncModal(); }
+  }
+});
+
+const auditBody = document.getElementById('audit-body');
+auditBody.innerHTML = CITIES.map(c => `<tr>
+  <td><b>${esc(c.name)}</b><br><span class="city-meta">mapa ${c.map} · ${esc(c.world)}</span></td>
+  <td>${esc(c.audit.terreno)}</td>
+  <td>${esc(c.audit.texturas)}</td>
+  <td>${esc(c.audit.objetos)}</td>
+  <td>${esc(c.audit.agua)}</td>
+  <td>${esc(c.audit.luz)}</td>
+  <td>${esc(c.audit.minimapa)}</td>
+</tr>`).join('');
+
+render();
+</script>
+</body>
+</html>
