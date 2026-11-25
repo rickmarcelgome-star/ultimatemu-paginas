@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Revisao Visual das Emendas — UltimateMU</title>
+<style>
+:root{
+  --bg:#15181c;
+  --card:#1d2127;
+  --card-2:#232830;
+  --line:#2c323a;
+  --fg:#e6eaee;
+  --mut:#9aa5b1;
+  --accent:#3a6fd8;
+  --ok:#5fd38d;
+  --ok-bg:rgba(95,211,141,.14);
+  --ok-bd:rgba(95,211,141,.48);
+  --warn:#f0b35a;
+  --warn-bg:rgba(240,179,90,.15);
+  --warn-bd:rgba(240,179,90,.48);
+  --bad:#f27474;
+  --bad-bg:rgba(242,116,116,.15);
+  --bad-bd:rgba(242,116,116,.52);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;-webkit-text-size-adjust:100%}
+main{max-width:1380px;margin:0 auto;padding:16px 14px 56px}
+h1{font-size:22px;line-height:1.25;margin:0 0 6px}
+.lead{color:var(--mut);margin:0 0 14px;font-size:14px}
+.topbar{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:12px;
+  margin-bottom:12px;
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.stats{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px}
+.pill{
+  background:var(--card-2);
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:4px 10px;
+  color:var(--fg);
+  font-variant-numeric:tabular-nums;
+}
+.pill.ok{color:var(--ok);border-color:var(--ok-bd);background:var(--ok-bg)}
+.pill.atencao{color:var(--warn);border-color:var(--warn-bd);background:var(--warn-bg)}
+.pill.ruim{color:var(--bad);border-color:var(--bad-bd);background:var(--bad-bg)}
+.pill.mut{color:var(--mut)}
+
+.controls{
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:var(--bg);
+  padding:8px 0 10px;
+  margin:0 -14px 12px;
+  padding-left:14px;
+  padding-right:14px;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.row-filters{
+  display:flex;
+  gap:6px;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  align-items:center;
+}
+.row-filters button, .row-filters select{
+  flex:none;
+  background:#262b33;
+  color:#cfd6de;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:6px 12px;
+  font:inherit;
+  font-size:13.5px;
+  white-space:nowrap;
+  cursor:pointer;
+}
+.row-filters button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.row-filters button.f-ruim.on{background:var(--bad);border-color:var(--bad);color:#15181c;font-weight:700}
+.row-filters button.f-atencao.on{background:var(--warn);border-color:var(--warn);color:#15181c;font-weight:700}
+.row-filters button.f-ok.on{background:var(--ok);border-color:var(--ok);color:#15181c;font-weight:700}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,410px),1fr));
+  gap:14px;
+}
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-left:4px solid var(--line);
+  border-radius:10px;
+  padding:13px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.card.st-ok{border-left-color:var(--ok)}
+.card.st-atencao{border-left-color:var(--warn)}
+.card.st-ruim{border-left-color:var(--bad)}
+
+.card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.card h2{font-size:17px;margin:0;color:#fff;line-height:1.25}
+.sub{font-size:12.5px;color:var(--mut);margin-top:2px}
+.semaforo-box{display:flex;align-items:center;gap:6px;flex:none}
+.nota{
+  font-size:14px;
+  font-weight:700;
+  font-variant-numeric:tabular-nums;
+  padding:3px 9px;
+  border-radius:8px;
+  background:var(--card-2);
+  border:1px solid var(--line);
+}
+.badge{
+  font-size:12px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+  padding:3px 9px;
+  border-radius:999px;
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.badge.ok{color:var(--ok);background:var(--ok-bg);border:1px solid var(--ok-bd)}
+.badge.ok .dot{background:var(--ok)}
+.badge.atencao{color:var(--warn);background:var(--warn-bg);border:1px solid var(--warn-bd)}
+.badge.atencao .dot{background:var(--warn)}
+.badge.ruim{color:var(--bad);background:var(--bad-bg);border:1px solid var(--bad-bd)}
+.badge.ruim .dot{background:var(--bad)}
+
+.img-wrap{position:relative;border-radius:8px;overflow:hidden;border:1px solid var(--line);background:#0f1216}
+.img-wrap img{display:block;width:100%;height:auto;cursor:zoom-in}
+.img-tabs{display:flex;gap:6px;flex-wrap:wrap}
+.img-tabs button{
+  background:var(--card-2);
+  color:#cfd6de;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:4px 10px;
+  font:inherit;
+  font-size:12px;
+  cursor:pointer;
+}
+.img-tabs button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.flip-tag{
+  font-size:11px;
+  color:var(--mut);
+  margin-left:auto;
+  align-self:center;
+}
+
+.metrics{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:6px;
+}
+.m-chip{
+  background:var(--card-2);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:6px 8px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:6px;
+  font-size:12.5px;
+  font-variant-numeric:tabular-nums;
+}
+.m-chip .ml{color:var(--mut)}
+.m-chip .mv{font-weight:700;color:var(--fg);white-space:nowrap}
+.m-chip.m-ok{border-color:var(--ok-bd)}
+.m-chip.m-ok .mv{color:var(--ok)}
+.m-chip.m-atencao{border-color:var(--warn-bd)}
+.m-chip.m-atencao .mv{color:var(--warn)}
+.m-chip.m-ruim{border-color:var(--bad-bd);background:var(--bad-bg)}
+.m-chip.m-ruim .mv{color:var(--bad)}
+
+.notas{margin:0;padding-left:18px;font-size:13.5px;color:#dce2e8}
+.notas li{margin:2px 0}
+.meta-foot{
+  font-size:11.5px;
+  color:var(--mut);
+  border-top:1px solid var(--line);
+  padding-top:7px;
+  margin-top:auto;
+  display:flex;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:6px;
+}
+
+.legend-box{
+  margin-top:22px;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:13px;
+  font-size:13.5px;
+  color:#cfd6de;
+}
+.legend-box h3{margin:0 0 8px;font-size:15px;color:#fff}
+.legend-box ul{margin:0;padding-left:18px}
+.legend-box li{margin:3px 0}
+
+.modal{
+  position:fixed;inset:0;z-index:99;
+  background:rgba(10,12,15,.92);
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  padding:14px;
+}
+.modal.open{display:flex}
+.modal img{max-width:100%;max-height:85vh;border-radius:8px;border:1px solid var(--line)}
+.modal-cap{margin-top:8px;color:#cfd6de;font-size:13px;text-align:center}
+.modal-close{
+  position:fixed;top:12px;right:14px;
+  background:#262b33;color:#fff;border:1px solid var(--line);
+  border-radius:999px;padding:6px 14px;font:inherit;font-size:14px;cursor:pointer;
+}
+
+@media (max-width:520px){
+  main{padding:12px 10px 48px}
+  .controls{margin:0 -10px 10px;padding-left:10px;padding-right:10px}
+  h1{font-size:19px}
+  .card{padding:11px}
+  .metrics{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<main>
+  <h1>Revisao visual das emendas</h1>
+  <p class="lead">Apoio ao paisagismo do World Link · Rodada: <b>Linha de base r1110 (wl-continuo + r2174)</b> · Atualizado em 25/11/2026 03:30. Cada emenda recebe 7 metricas automaticas e um semaforo (OK / Atencao / Ruim). Toque na imagem para ampliar.</p>
+
+  <div class="topbar">
+    <div class="stats">
+      <span class="pill">Emendas: <b id="st-total">12</b></span>
+      <span class="pill ruim">Ruim: <b id="st-ruim">12</b></span>
+      <span class="pill atencao">Atencao: <b id="st-atencao">0</b></span>
+      <span class="pill ok">OK: <b id="st-ok">0</b></span>
+      <span class="pill mut">Nota media: <b id="st-media">0.58</b>/10</span>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="row-filters" id="f-status">
+      <button type="button" class="on" data-st="all">Todas</button>
+      <button type="button" class="f-ruim" data-st="ruim">Ruim</button>
+      <button type="button" class="f-atencao" data-st="atencao">Atencao</button>
+      <button type="button" class="f-ok" data-st="ok">OK</button>
+      <select id="sort-sel" aria-label="Ordenar">
+        <option value="pior">Pior nota primeiro</option>
+        <option value="melhor">Melhor nota primeiro</option>
+        <option value="cidade">Por cidade (A-Z)</option>
+      </select>
+    </div>
+    <div class="row-filters" id="f-grupos"></div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <section class="legend-box">
+    <h3>Legenda das 7 metricas e do overlay de diagnostico</h3>
+    <ul>
+      <li><b>Delta E tom</b>: diferenca media de cor (CIE Lab) entre os dois lados da emenda (OK &le; 6 · Atencao &le; 13,5 · Ruim &gt; 13,5).</li>
+      <li><b>Retas (Hough)</b>: maior linha reta continua no terreno em % da largura da tela — em ciano no diagnostico (OK &le; 14% · Atencao &le; 26% · Ruim &gt; 26%).</li>
+      <li><b>Mosaico</b>: periodicidade FFT 2D e regularidade em grade de tiles quadrados (0–100; OK &le; 22 · Atencao &le; 44).</li>
+      <li><b>Degraus</b>: bordas horizontais fortes internas ao terreno — em ambar no diagnostico (0–100; OK &le; 22 · Atencao &le; 45).</li>
+      <li><b>Salto MAE</b>: diferenca media RGB entre o quadro antes e depois da troca estrada&harr;cidade (OK &le; 0,105 · Atencao &le; 0,165 · Ruim &gt; 0,165).</li>
+      <li><b>Vazios pretos</b>: blocos contiguos quase-pretos fora do HUD — em vermelho no diagnostico (OK &le; 0,15% · Atencao &le; 0,90%).</li>
+      <li><b>Cor chapada</b>: areas extensas de terreno sem textura local (fora do ceu/HUD) — em magenta no diagnostico (OK &le; 7% · Atencao &le; 20%).</li>
+    </ul>
+    <p style="margin:8px 0 0;font-size:12px;color:var(--mut)">Pagina estatica local sem senhas, IPs ou dados de conta. Capturas invertidas da r1110 foram corrigidas automaticamente na exibicao e na medicao.</p>
+  </section>
+</main>
+
+<div class="modal" id="modal">
+  <button type="button" class="modal-close" id="modal-close">Fechar</button>
+  <img id="modal-img" alt="Captura ampliada">
+  <div class="modal-cap" id="modal-cap"></div>
+</div>
+
+<script>
+const ITEMS = [{"id": "wl-continuo-e2-aida-map33", "grupo_id": "wl-continuo", "grupo_label": "wl-continuo (20261125-052636-934)", "fonte": "wl-continuo-r2172-20261125-052636-934", "map_id": 33, "cidade": "Aida", "slug": "e2-aida", "tipo_cidade": "Mega", "estrada": "E2 (Noria->Aida)", "quadros_total": 50, "quadros_cidade": 26, "quadros_estrada": 24, "arquivo_principal": "00008-map33-road.png", "arquivo_secundario": "00007-map33-city.png", "invertida_corrigida": true, "img_main": "emendas/wl-continuo-e2-aida-map33-main.jpg", "img_diag": "emendas/wl-continuo-e2-aida-map33-diag.jpg", "img_sec": "emendas/wl-continuo-e2-aida-map33-city.jpg", "metricas": {"delta_e_medio": 15.7, "delta_e_lados": 16.74, "delta_e_cidade_estrada": 13.75, "retas_qtd": 81, "reta_max_pct": 102.4, "mosaico_score": 100.0, "degraus_score": 100.0, "degraus_linhas_qtd": 33, "mae_troca": 0.2543, "mae_saida": 0.2543, "mae_entrada": 0.2055, "mae_log_saida": 0.22199, "mae_log_entrada": 0.20486, "vazios_pretos_pct": 13.772, "cor_chapada_pct": 1.38}, "nota": 0.0, "semaforo": "ruim", "status_metricas": {"delta_e": "ruim", "retas": "ruim", "mosaico": "ruim", "degraus": "ruim", "mae": "ruim", "vazios": "ruim", "chapada": "ok"}, "notas": ["Vazios pretos detectados (13.77% do terreno).", "Corte/borda reta longa (102% da largura, 81 reta(s)).", "Diferenca forte de tom entre os lados (Delta E 15.7).", "Salto visual alto na troca estrada<->cidade (MAE 0.254).", "Degraus/bordas horizontais fortes no relevo (indice 100).", "Padrao de mosaico/grade visivel (indice 100)."]}, {"id": "wl-continuo-e4-tarkan-map8", "grupo_id": "wl-continuo", "grupo_label": "wl-continuo (20261125-052636-934)", "fonte": "wl-continuo-r2172-20261125-052636-934", "map_id": 8, "cidade": "Tarkan", "slug": "e4-tarkan", "tipo_cidade": "Mega", "estrada": "E4 (Swamp->Tarkan)", "quadros_total": 49, "quadros_cidade": 26, "quadros_estrada": 23, "arquivo_principal": "00058-map8-road.png", "arquivo_secundario": "00057-map8-city.png", "invertida_corrigida": true, "img_main": "emendas/wl-continuo-e4-tarkan-map8-main.jpg", "img_diag": "emendas/wl-continuo-e4-tarkan-map8-diag.jpg", "img_sec": "emendas/wl-continuo-e4-tarkan-map8-city.jpg", "metricas": {"delta_e_medio": 24.01, "delta_e_lados": 27.63, "delta_e_cidade_estrada": 17.29, "retas_qtd": 49, "reta_max_pct": 95.7, "mosaico_score": 100.0, "degraus_score": 100.0, "degraus_linhas_qtd": 17, "mae_troca": 0.2906, "mae_saida": 0.2906, "mae_entrada": 0.2057, "mae_log_saida": 0.30093, "mae_log_entrada": 0.21656, "vazios_pretos_pct": 6.045, "cor_chapada_pct": 6.54}, "nota": 0.0, "semaforo": "ruim", "status_metricas": {"delta_e": "ruim", "retas": "ruim", "mosaico": "ruim", "degraus": "ruim", "mae": "ruim", "vazios": "ruim", "chapada": "ok"}, "notas": ["Vazios pretos detectados (6.04% do terreno).", "Corte/borda reta longa (96% da largura, 49 reta(s)).", "Diferenca forte de tom entre os lados (Delta E 24.0).", "Salto visual alto na troca estrada<->cidade (MAE 0.291).", "Degraus/bordas horizontais fortes no relevo (indice 100).", "Padrao de mosaico/grade visivel (indice 100)."]}, {"id": "wl-continuo-e3-swamp-map56", "grupo_id": "wl-continuo", "grupo_label": "wl-continuo (20261125-052636-934)", "fonte": "wl-continuo-r2172-20261125-052636-934", "map_id": 56, "cidade": "Swamp of Calmness", "slug": "e3-swamp", "tipo_cidade": "Mega", "estrada": "E3 (Aida->Swamp)", "quadros_total": 47, "quadros_cidade": 27, "quadros_estrada": 20, "arquivo_principal": "00107-map56-road.png", "arquivo_secundario": "00106-map56-city.png", "invertida_corrigida": true, "img_main": "emendas/wl-continuo-e3-swamp-map56-main.jpg", "img_diag": "emendas/wl-continuo-e3-swamp-map56-diag.jpg", "img_sec": "emendas/wl-continuo-e3-swamp-map56-city.jpg", "metricas": {"delta_e_medio": 18.8, "delta_e_lados": 22.6, "delta_e_cidade_estrada": 11.75, "retas_qtd": 79, "reta_max_pct": 101.5, "mosaico_score": 100.0, "degraus_score": 100.0, "degraus_linhas_qtd": 38, "mae_troca": 0.1974, "mae_saida": 0.161, "mae_entrada": 0.1974, "mae_log_saida": 0.18527, "mae_log_entrada": 0.22649, "vazios_pretos_pct": 12.914, "cor_chapada_pct": 0.0}, "nota": 0.0, "semaforo": "ruim", "status_metricas": {"delta_e": "ruim", "retas": "ruim", "mosaico": "ruim", "degraus": "ruim", "mae": "ruim", "vazios": "ruim", "chapada": "ok"}, "notas": ["Vazios pretos detectados (12.91% do terreno).", "Corte/borda reta longa (102% da largura, 79 reta(s)).", "Diferenca forte de tom entre os lados (Delta E 18.8).", "Salto visual alto na troca estrada<->cidade (MAE 0.197).", "Degraus/bordas horizontais fortes no relevo (indice 100).", "Padrao de mosaico/grade visivel (indice 100)."]}, {"id": "wl-continuo-e5-losttower-map4", "grupo_id": "wl-continuo", "grupo_label": "wl-continuo (20261125-052636-934)", "fonte": "wl-continuo-r2172-20261125-052636-934", "map_id": 4, "cidade": "Lost Tower", "slug": "e5-losttower", "tipo_cidade": "Mega", "estrada": "E5 (Devias->Lost Tower)", "quadros_total": 55, "quadros_cidade": 34, "quadros_estrada": 21, "arquivo_principal": "00154-map4-road.png", "arquivo_secundario": "00153-map4-city.png", "invertida_corrigida": true, "img_main": "emendas/wl-continuo-e5-losttower-map4-main.jpg", "img_diag": "emendas/wl-continuo-e5-losttower-map4-diag.jpg", "img_sec": "emendas/wl-continuo-e5-losttower-map4-city.jpg", "metricas": {"delta_e_medio": 13.36, "delta_e_lados": 19.52, "delta_e_cidade_estrada": 1.92, "retas_qtd": 45, "reta_max_pct": 83.2, "mosaico_score": 100.0, "degraus_score": 100.0, "degraus_linhas_qtd": 14, "mae_troca": 0.109, "mae_saida": 0.109, "mae_entrada": 0.0474, "mae_log_saida": 0.10078, "mae_log_entrada": null, "vazios_pretos_pct": 91.952, "cor_chapada_pct": 42.35}, "nota": 0.0, "semaforo": "ruim", "status_metricas": {"delta_e": "atencao", "retas": "ruim", "mosaico": "ruim", "degraus": "ruim", "mae": "atencao", "vazios": "ruim", "chapada": "ruim"}, "notas": ["Cor chapada sem textura em 42.4% do terreno.", "Vazios pretos detectados (91.95% do terreno).", "Corte/borda reta longa (83% da largura, 45 reta(s)).", "Diferenca forte de tom entre os lados (Delta E 13.4).", "Salto moderado na troca estrada<->cidade (MAE 0.109).", "Degraus/bordas horizontais fortes no relevo (indice 100).", "Padrao de mosaico/grade visivel (indice 100)."]}, {"id": "wl-continuo-e6-raklion-map57", "grupo_id": "wl-continuo", "grupo_label": "wl-continuo (20261125-052636-934)", "fonte": "wl-continuo-r2172-20261125-052636-934", "map_id": 57, "cidade": "Raklion", "slug": "e6-raklion", "tipo_cidade": "Mega", "estrada": "E6 (Devias->Raklion)", "quadros_total": 49, "quadros_cidade": 28, "quadros_estrada": 21, "arquivo_principal": "00210-map57-road.png", "arquivo_secundario": "00209-map57-city.png", "invertida_corrigida": true, "img_main": "emendas/wl-continuo-e6-raklion-map57-main.jpg", "img_diag": "emendas/wl-continuo-e6-raklion-map57-diag.jpg", "img_sec": "emendas/wl-continuo-e6-raklion-map57-city.jpg", "metricas": {"delta_e_medio": 11.95, "delta_e_lados": 17.89, "delta_e_cidade_estrada": 0.91, "retas_qtd": 28, "reta_max_pct": 86.1, "mosaico_score": 100.0, "degraus_score": 96.3, "degraus_linhas_qtd": 8, "mae_troca": 0.2356, "mae_saida": 0.2356, "mae_entrada": 0.1954, "mae_log_saida": 0.21499, "mae_log_entrada": 0.1901, "vazios_pretos_pct": 4.639, "cor_chapada_pct": 60.29}, "nota": 0.0, "semaforo": "ruim", "status_metricas": {"delta_e": "atencao", "retas": "ruim", "mosaico": "ruim", "degraus": "ruim", "mae": "ruim", "vazios": "ruim", "chapada": "ruim"}, "notas": ["Cor chapada sem textura em 60.3% do terreno.", "Vazios pretos detectados (4.64% do terreno).", "Corte/borda reta longa (86% da largura, 28 reta(s)).", "Diferenca forte de tom entre os lados (Delta E 11.9).", "Salto visual alto na troca estrada<->cidade (MAE 0.236).", "Degraus/bordas horizontais fortes no relevo (indice 96).", "Padrao de mosaico/grade visivel (indice 100)."]}, {"id": "wl-continuo-e9-kanturu-map37", "grupo_id": "wl-continuo", "grupo_label": "wl-continuo (20261125-052636-934)", "fonte": "wl-continuo-r2172-20261125-052636-934", "map_id": 37, "cidade": "Kanturu", "slug": "e9-kanturu", "tipo_cidade": "Mega", "estrada": "E9 (Tarkan->Kanturu)", "quadros_total": 50, "quadros_cidade": 28, "quadros_estrada": 22, "arquivo_principal": "00258-map37-road.png", "arquivo_secundario": "00257-map37-city.png", "invertida_corrigida": true, "img_main": "emendas/wl-continuo-e9-kanturu-map37-main.jpg", "img_diag": "emendas/wl-continuo-e9-kanturu-map37-diag.jpg", "img_sec": "emendas/wl-continuo-e9-kanturu-map37-city.jpg", "metricas": {"delta_e_medio": 9.48, "delta_e_lados": 11.1, "delta_e_cidade_estrada": 6.48, "retas_qtd": 68, "reta_max_pct": 100.4, "mosaico_score": 100.0, "degraus_score": 100.0, "degraus_linhas_qtd": 37, "mae_troca": 0.194, "mae_saida": 0.194, "mae_entrada": 0.1924, "mae_log_saida": 0.1791, "mae_log_entrada": 0.1817, "vazios_pretos_pct": 3.782, "cor_chapada_pct": 0.0}, "nota": 0.0, "semaforo": "ruim", "status_metricas": {"delta_e": "atencao", "retas": "ruim", "mosaico": "ruim", "degraus": "ruim", "mae": "ruim", "vazios": "ruim", "chapada": "ok"}, "notas": ["Vazios pretos detectados (3.78% do terreno).", "Corte/borda reta longa (100% da largura, 68 reta(s)).", "Diferenca forte de tom entre os lados (Delta E 9.5).", "Salto visual alto na troca estrada<->cidade (MAE 0.194).", "Degraus/bordas horizontais fortes no relevo (indice 100).", "Padrao de mosaico/grade visivel (indice 100)."]}, {"id": "wl-continuo-e10-crywolf-map34", "grupo_id": "wl-continuo", "grupo_label": "wl-continuo (20261125-052636-934)", "fonte": "wl-continuo-r2172-20261125-052636-934", "map_id": 34, "cidade": "Crywolf", "slug": "e10-crywolf", "tipo_cidade": "Mega", "estrada": "E10 (Devias->Crywolf)", "quadros_total": 17, "quadros_cidade": 17, "quadros_estrada": 0, "arquivo_principal": "00309-map34-city.png", "arquivo_secundario": "00317-map34-city.png", "invertida_corrigida": true, "img_main": "emendas/wl-continuo-e10-crywolf-map34-main.jpg", "img_diag": "emendas/wl-continuo-e10-crywolf-map34-diag.jpg", "img_sec": "emendas/wl-continuo-e10-crywolf-map34-city.jpg", "metricas": {"delta_e_medio": 36.91, "delta_e_lados": 36.91, "delta_e_cidade_estrada": null, "retas_qtd": 66, "reta_max_pct": 101.5, "mosaico_score": 100.0, "degraus_score": 100.0, "degraus_linhas_qtd": 35, "mae_troca": null, "mae_saida": null, "mae_entrada": null, "mae_log_saida": null, "mae_log_entrada": null, "vazios_pretos_pct": 1.37, "cor_chapada_pct": 0.0}, "nota": 0.0, "semaforo": "ruim", "status_metricas": {"delta_e": "ruim", "retas": "ruim", "mosaico": "ruim", "degraus": "ruim", "mae": "na", "vazios": "ruim", "chapada": "ok"}, "notas": ["Travessia incompleta na captura (faltou par estrada/cidade).", "Vazios pretos detectados (1.37% do terreno).", "Corte/borda reta longa (102% da largura, 66 reta(s)).", "Diferenca forte de tom entre os lados (Delta E 36.9).", "Degraus/bordas horizontais fortes no relevo (indice 100).", "Padrao de mosaico/grade visivel (indice 100)."]}, {"id": "wl-continuo-e1-lorencia-map0", "grupo_id": "wl-continuo", "grupo_label": "wl-continuo (20261125-052636-934)", "fonte": "wl-continuo-r2172-20261125-052636-934", "map_id": 0, "cidade": "Lorencia", "slug": "e1-lorencia", "tipo_cidade": "Propria", "estrada": "E1 (Lorencia->Noria)", "quadros_total": 50, "quadros_cidade": 28, "quadros_estrada": 22, "arquivo_principal": "00326-map0-road.png", "arquivo_secundario": "00325-map0-city.png", "invertida_corrigida": true, "img_main": "emendas/wl-continuo-e1-lorencia-map0-main.jpg", "img_diag": "emendas/wl-continuo-e1-lorencia-map0-diag.jpg", "img_sec": "emendas/wl-continuo-e1-lorencia-map0-city.jpg", "metricas": {"delta_e_medio": 20.71, "delta_e_lados": 31.58, "delta_e_cidade_estrada": 0.53, "retas_qtd": 61, "reta_max_pct": 100.7, "mosaico_score": 100.0, "degraus_score": 100.0, "degraus_linhas_qtd": 28, "mae_troca": 0.0795, "mae_saida": 0.0795, "mae_entrada": 0.0746, "mae_log_saida": 0.09712, "mae_log_entrada": 0.08867, "vazios_pretos_pct": 0.051, "cor_chapada_pct": 1.14}, "nota": 2.3, "semaforo": "ruim", "status_metricas": {"delta_e": "ruim", "retas": "ruim", "mosaico": "ruim", "degraus": "ruim", "mae": "ok", "vazios": "ok", "chapada": "ok"}, "notas": ["Corte/borda reta longa (101% da largura, 61 reta(s)).", "Diferenca forte de tom entre os lados (Delta E 20.7).", "Degraus/bordas horizontais fortes no relevo (indice 100).", "Padrao de mosaico/grade visivel (indice 100)."]}, {"id": "wl-continuo-e1-noria-map3", "grupo_id": "wl-continuo", "grupo_label": "wl-continuo (20261125-052636-934)", "fonte": "wl-continuo-r2172-20261125-052636-934", "map_id": 3, "cidade": "Noria", "slug": "e1-noria", "tipo_cidade": "Propria", "estrada": "E1/E2 (Noria)", "quadros_total": 48, "quadros_cidade": 26, "quadros_estrada": 22, "arquivo_principal": "00375-map3-road.png", "arquivo_secundario": "00374-map3-city.png", "invertida_corrigida": true, "img_main": "emendas/wl-continuo-e1-noria-map3-main.jpg", "img_diag": "emendas/wl-continuo-e1-noria-map3-diag.jpg", "img_sec": "emendas/wl-continuo-e1-noria-map3-city.jpg", "metricas": {"delta_e_medio": 28.85, "delta_e_lados": 42.6, "delta_e_cidade_estrada": 3.33, "retas_qtd": 54, "reta_max_pct": 100.0, "mosaico_score": 100.0, "degraus_score": 100.0, "degraus_linhas_qtd": 34, "mae_troca": 0.1339, "mae_saida": 0.1339, "mae_entrada": 0.1271, "mae_log_saida": 0.14753, "mae_log_entrada": 0.1391, "vazios_pretos_pct": 0.0, "cor_chapada_pct": 0.0}, "nota": 1.6, "semaforo": "ruim", "status_metricas": {"delta_e": "ruim", "retas": "ruim", "mosaico": "ruim", "degraus": "ruim", "mae": "atencao", "vazios": "ok", "chapada": "ok"}, "notas": ["Corte/borda reta longa (100% da largura, 54 reta(s)).", "Diferenca forte de tom entre os lados (Delta E 28.9).", "Salto moderado na troca estrada<->cidade (MAE 0.134).", "Degraus/bordas horizontais fortes no relevo (indice 100).", "Padrao de mosaico/grade visivel (indice 100)."]}, {"id": "r2174-r1110-aida-estrada", "grupo_id": "r2174", "grupo_label": "work/r2174 (referencia)", "fonte": "work/r2174", "map_id": 33, "cidade": "Aida (recorte r1110)", "slug": "r2174-aida-r1110", "tipo_cidade": "Mega", "estrada": "E2 (Noria->Aida) · quadro r1110", "quadros_total": 1, "quadros_cidade": 0, "quadros_estrada": 1, "arquivo_principal": "r1110-estrada-aida.png", "arquivo_secundario": null, "invertida_corrigida": true, "img_main": "emendas/r2174-r1110-aida-estrada-main.jpg", "img_diag": "emendas/r2174-r1110-aida-estrada-diag.jpg", "img_sec": null, "metricas": {"delta_e_medio": 15.11, "delta_e_lados": 15.11, "delta_e_cidade_estrada": null, "retas_qtd": 72, "reta_max_pct": 101.3, "mosaico_score": 100.0, "degraus_score": 100.0, "degraus_linhas_qtd": 23, "mae_troca": null, "mae_saida": null, "mae_entrada": null, "mae_log_saida": null, "mae_log_entrada": null, "vazios_pretos_pct": 0.0, "cor_chapada_pct": 3.91}, "nota": 3.1, "semaforo": "ruim", "status_metricas": {"delta_e": "ruim", "retas": "ruim", "mosaico": "ruim", "degraus": "ruim", "mae": "na", "vazios": "ok", "chapada": "ok"}, "notas": ["Corte/borda reta longa (101% da largura, 72 reta(s)).", "Diferenca forte de tom entre os lados (Delta E 15.1).", "Degraus/bordas horizontais fortes no relevo (indice 100).", "Padrao de mosaico/grade visivel (indice 100)."]}, {"id": "r2174-r1109-map33", "grupo_id": "r2174", "grupo_label": "work/r2174 (referencia)", "fonte": "work/r2174", "map_id": 33, "cidade": "Aida (r1109 shader quebrado)", "slug": "r2174-r1109-e2-aida", "tipo_cidade": "Mega", "estrada": "E2 (Noria->Aida) · r1109", "quadros_total": 2, "quadros_cidade": 1, "quadros_estrada": 1, "arquivo_principal": "00009-map33-road.png", "arquivo_secundario": "00007-map33-city.png", "invertida_corrigida": false, "img_main": "emendas/r2174-r1109-map33-main.jpg", "img_diag": "emendas/r2174-r1109-map33-diag.jpg", "img_sec": "emendas/r2174-r1109-map33-city.jpg", "metricas": {"delta_e_medio": 45.77, "delta_e_lados": 63.47, "delta_e_cidade_estrada": 12.9, "retas_qtd": 45, "reta_max_pct": 89.1, "mosaico_score": 100.0, "degraus_score": 100.0, "degraus_linhas_qtd": 17, "mae_troca": 0.2481, "mae_saida": 0.2481, "mae_entrada": null, "mae_log_saida": null, "mae_log_entrada": null, "vazios_pretos_pct": 18.904, "cor_chapada_pct": 46.17}, "nota": 0.0, "semaforo": "ruim", "status_metricas": {"delta_e": "ruim", "retas": "ruim", "mosaico": "ruim", "degraus": "ruim", "mae": "ruim", "vazios": "ruim", "chapada": "ruim"}, "notas": ["Cor chapada sem textura em 46.2% do terreno.", "Vazios pretos detectados (18.90% do terreno).", "Corte/borda reta longa (89% da largura, 45 reta(s)).", "Diferenca forte de tom entre os lados (Delta E 45.8).", "Salto visual alto na troca estrada<->cidade (MAE 0.248).", "Degraus/bordas horizontais fortes no relevo (indice 100).", "Padrao de mosaico/grade visivel (indice 100)."]}, {"id": "r2174-r1109-map8", "grupo_id": "r2174", "grupo_label": "work/r2174 (referencia)", "fonte": "work/r2174", "map_id": 8, "cidade": "Tarkan (r1109 shader quebrado)", "slug": "r2174-r1109-e4-tarkan", "tipo_cidade": "Mega", "estrada": "E4 (Swamp->Tarkan) · r1109", "quadros_total": 2, "quadros_cidade": 1, "quadros_estrada": 1, "arquivo_principal": "00036-map8-road.png", "arquivo_secundario": "00030-map8-city.png", "invertida_corrigida": false, "img_main": "emendas/r2174-r1109-map8-main.jpg", "img_diag": "emendas/r2174-r1109-map8-diag.jpg", "img_sec": "emendas/r2174-r1109-map8-city.jpg", "metricas": {"delta_e_medio": 40.88, "delta_e_lados": 49.2, "delta_e_cidade_estrada": 25.43, "retas_qtd": 36, "reta_max_pct": 73.2, "mosaico_score": 100.0, "degraus_score": 100.0, "degraus_linhas_qtd": 12, "mae_troca": 0.2089, "mae_saida": 0.2089, "mae_entrada": null, "mae_log_saida": null, "mae_log_entrada": null, "vazios_pretos_pct": 8.935, "cor_chapada_pct": 58.31}, "nota": 0.0, "semaforo": "ruim", "status_metricas": {"delta_e": "ruim", "retas": "ruim", "mosaico": "ruim", "degraus": "ruim", "mae": "ruim", "vazios": "ruim", "chapada": "ruim"}, "notas": ["Cor chapada sem textura em 58.3% do terreno.", "Vazios pretos detectados (8.94% do terreno).", "Corte/borda reta longa (73% da largura, 36 reta(s)).", "Diferenca forte de tom entre os lados (Delta E 40.9).", "Salto visual alto na troca estrada<->cidade (MAE 0.209).", "Degraus/bordas horizontais fortes no relevo (indice 100).", "Padrao de mosaico/grade visivel (indice 100)."]}];
+const GRUPOS = [{"id": "wl-continuo", "label": "wl-continuo (20261125-052636-934)"}, {"id": "r2174", "label": "work/r2174 (referencia)"}];
+let stFilter = "all";
+let grpFilter = "all";
+let sortMode = "pior";
+
+const grid = document.getElementById("grid");
+const fGrupos = document.getElementById("f-grupos");
+const modal = document.getElementById("modal");
+const modalImg = document.getElementById("modal-img");
+const modalCap = document.getElementById("modal-cap");
+
+function esc(s){
+  return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
+function labelSem(s){
+  if(s==="ok") return "OK";
+  if(s==="atencao") return "Atencao";
+  return "Ruim";
+}
+
+function fmtVal(v, suf="", dec=1){
+  if(v===null || v===undefined) return "—";
+  return Number(v).toFixed(dec) + suf;
+}
+
+function renderGrupoButtons(){
+  const btns = [{id:"all", label:"Todas as fontes"}].concat(GRUPOS);
+  fGrupos.innerHTML = btns.map(g =>
+    `<button type="button" class="${grpFilter===g.id?'on':''}" data-grp="${esc(g.id)}">${esc(g.label)}</button>`
+  ).join("");
+  fGrupos.querySelectorAll("button").forEach(b => {
+    b.onclick = () => {
+      grpFilter = b.dataset.grp;
+      fGrupos.querySelectorAll("button").forEach(x => x.classList.toggle("on", x===b));
+      renderCards();
+    };
+  });
+}
+
+function updateSummary(list){
+  const tot = list.length;
+  const r = list.filter(x => x.semaforo==="ruim").length;
+  const a = list.filter(x => x.semaforo==="atencao").length;
+  const o = list.filter(x => x.semaforo==="ok").length;
+  const med = tot ? (list.reduce((s,x)=>s+x.nota,0)/tot).toFixed(1) : "0.0";
+  document.getElementById("st-total").textContent = tot;
+  document.getElementById("st-ruim").textContent = r;
+  document.getElementById("st-atencao").textContent = a;
+  document.getElementById("st-ok").textContent = o;
+  document.getElementById("st-media").textContent = med;
+}
+
+function openModal(src, cap){
+  modalImg.src = src;
+  modalCap.textContent = cap;
+  modal.classList.add("open");
+}
+document.getElementById("modal-close").onclick = () => modal.classList.remove("open");
+modal.onclick = (e) => { if(e.target === modal) modal.classList.remove("open"); };
+document.addEventListener("keydown", e => { if(e.key==="Escape") modal.classList.remove("open"); });
+
+function renderCards(){
+  let list = ITEMS.filter(x => (stFilter==="all" || x.semaforo===stFilter) && (grpFilter==="all" || x.grupo_id===grpFilter));
+  if(sortMode==="pior") list.sort((a,b) => a.nota - b.nota || a.cidade.localeCompare(b.cidade));
+  else if(sortMode==="melhor") list.sort((a,b) => b.nota - a.nota || a.cidade.localeCompare(b.cidade));
+  else list.sort((a,b) => a.cidade.localeCompare(b.cidade));
+
+  updateSummary(list);
+
+  if(!list.length){
+    grid.innerHTML = `<div class="card"><p style="margin:0;color:var(--mut)">Nenhuma emenda neste filtro.</p></div>`;
+    return;
+  }
+
+  grid.innerHTML = list.map(it => {
+    const m = it.metricas;
+    const sm = it.status_metricas;
+    const maeTxt = m.mae_troca !== null
+      ? `${fmtVal(m.mae_troca,"",3)}${m.mae_saida!==null&&m.mae_entrada!==null ? ` (S:${m.mae_saida.toFixed(2)} E:${m.mae_entrada.toFixed(2)})` : ""}`
+      : "sem par";
+    const tabs = [
+      {k:"main", lbl:"Print limpo", src:it.img_main},
+      {k:"diag", lbl:"Diagnostico", src:it.img_diag}
+    ];
+    if(it.img_sec) tabs.push({k:"sec", lbl:"Lado cidade", src:it.img_sec});
+
+    return `<article class="card st-${esc(it.semaforo)}" data-id="${esc(it.id)}">
+      <div class="card-head">
+        <div>
+          <h2>${esc(it.cidade)}</h2>
+          <div class="sub">${esc(it.estrada)} · ${esc(it.tipo_cidade)} · ${esc(it.grupo_label)}</div>
+        </div>
+        <div class="semaforo-box">
+          <span class="nota">${it.nota.toFixed(1)}/10</span>
+          <span class="badge ${esc(it.semaforo)}"><span class="dot"></span>${labelSem(it.semaforo)}</span>
+        </div>
+      </div>
+
+      <div class="img-tabs">
+        ${tabs.map((t,i)=>`<button type="button" class="${i===0?'on':''}" data-src="${esc(t.src)}" data-lbl="${esc(t.lbl)}">${esc(t.lbl)}</button>`).join("")}
+        ${it.invertida_corrigida ? `<span class="flip-tag">orientacao corrigida</span>` : ""}
+      </div>
+
+      <div class="img-wrap">
+        <img loading="lazy" src="${esc(it.img_main)}" alt="${esc(it.cidade)}">
+      </div>
+
+      <div class="metrics">
+        <div class="m-chip m-${esc(sm.delta_e)}"><span class="ml">Delta E tom</span><span class="mv">${fmtVal(m.delta_e_medio,"",1)}</span></div>
+        <div class="m-chip m-${esc(sm.retas)}"><span class="ml">Retas (Hough)</span><span class="mv">${fmtVal(m.reta_max_pct,"%",0)} (${m.retas_qtd})</span></div>
+        <div class="m-chip m-${esc(sm.mosaico)}"><span class="ml">Mosaico</span><span class="mv">${fmtVal(m.mosaico_score,"/100",0)}</span></div>
+        <div class="m-chip m-${esc(sm.degraus)}"><span class="ml">Degraus</span><span class="mv">${fmtVal(m.degraus_score,"/100",0)}</span></div>
+        <div class="m-chip m-${esc(sm.mae)}"><span class="ml">Salto MAE</span><span class="mv">${maeTxt}</span></div>
+        <div class="m-chip m-${esc(sm.vazios)}"><span class="ml">Vazios pretos</span><span class="mv">${fmtVal(m.vazios_pretos_pct,"%",2)}</span></div>
+        <div class="m-chip m-${esc(sm.chapada)}"><span class="ml">Cor chapada</span><span class="mv">${fmtVal(m.cor_chapada_pct,"%",1)}</span></div>
+      </div>
+
+      <ul class="notas">
+        ${it.notas.map(n=>`<li>${esc(n)}</li>`).join("")}
+      </ul>
+
+      <div class="meta-foot">
+        <span>Quadro: ${esc(it.arquivo_principal)}</span>
+        <span>${it.quadros_total} PNG(s) · ${esc(it.fonte)}</span>
+      </div>
+    </article>`;
+  }).join("");
+
+  grid.querySelectorAll(".card").forEach(card => {
+    const img = card.querySelector(".img-wrap img");
+    const title = card.querySelector("h2").textContent;
+    let curLbl = "Print limpo";
+    card.querySelectorAll(".img-tabs button").forEach(b => {
+      b.onclick = () => {
+        card.querySelectorAll(".img-tabs button").forEach(x => x.classList.remove("on"));
+        b.classList.add("on");
+        img.src = b.dataset.src;
+        curLbl = b.dataset.lbl;
+      };
+    });
+    img.onclick = () => openModal(img.src, `${title} — ${curLbl}`);
+  });
+}
+
+document.querySelectorAll("#f-status button").forEach(b => {
+  b.onclick = () => {
+    stFilter = b.dataset.st;
+    document.querySelectorAll("#f-status button").forEach(x => x.classList.toggle("on", x===b));
+    renderCards();
+  };
+});
+document.getElementById("sort-sel").onchange = (e) => {
+  sortMode = e.target.value;
+  renderCards();
+};
+
+renderGrupoButtons();
+renderCards();
+</script>
+</body>
+</html>
