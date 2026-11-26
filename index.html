@@ -11,7 +11,7 @@ iframe.on{display:block}
 </style></head><body>
 <nav id="n"></nav><div id="f"></div>
 <script>
-const abas=[["Terminal","terminal.html"],["Painel","manha.html"],["Fenrir","fenrir-aprovacao.html"],["Itens extras","extras-mega.html"],["Itens exclusivos","itens-exclusivos.html"],["Skills de área","skills-mega.html"],["Janelas","janelas-aprovacao.html"],["Montarias","montarias.html"],["FPS A/B","fps-ab.html"],["Emendas","emendas.html"],["Antigos x Mega","antigos-x-mega.html"],["Verificação","verificacao-final.html"],["Atmosfera x Mega","atmosfera-mega.html"],["Skills","skills-comparar.html"],["Skills novas do Mega","skills-novas/index.html"]];
+const abas=[["Terminal","terminal.html"],["Painel","manha.html"],["Fenrir","fenrir-aprovacao.html"],["Itens extras","extras-mega.html"],["Itens exclusivos","itens-exclusivos.html"],["Skills de área","skills-mega.html"],["Janelas","janelas-aprovacao.html"],["Montarias","montarias.html"],["FPS A/B","fps-ab.html"],["Emendas","emendas.html"],["Antigos x Mega","antigos-x-mega.html"],["Verificação","verificacao-final.html"],["Atmosfera x Mega","atmosfera-mega.html"],["Skills","skills-comparar.html"],["Skills novas do Mega","skills-novas/index.html"],["Monstros","monstros/index.html"]];
 const n=document.getElementById('n'),f=document.getElementById('f'),fr={};
 function abrir(i){abas.forEach((a,j)=>{n.children[j].classList.toggle('on',i===j);if(fr[j])fr[j].classList.toggle('on',i===j);});
  if(!fr[i]){const e=document.createElement('iframe');e.src=abas[i][1];e.className='on';f.appendChild(e);fr[i]=e;}
