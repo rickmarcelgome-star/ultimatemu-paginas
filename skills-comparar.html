@@ -20,7 +20,9 @@
     .row { margin-top: 16px; padding: 16px; background: #1b222b; border: 1px solid #35414e; border-radius: 8px; }
     h2 { font-size: 1.12rem; margin: 0 0 6px; }
     .id { font-size: .82rem; font-weight: 500; color: #b9cfe3; }
-    .pairs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 14px 0 4px; }
+    .pairs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 14px 0 4px; }
+    @media (max-width: 760px) { .pairs { grid-template-columns: minmax(0, 1fr); } }
+    figure.ref { outline: 1px solid #3a6fd8; }
     figure { margin: 0; background: #12161c; border-radius: 4px; overflow: hidden; }
     figcaption { padding: 8px 10px; font-size: .86rem; }
     img, video { display: block; width: 100%; height: auto; }
@@ -42,6 +44,7 @@
   <header>
     <h1>Skills</h1>
     <p class="muted">Comparação em Lorencia · antigo e candidato Mega · 20 fps</p>
+    <p class="muted">A terceira coluna é o prefab do Mega tocado como está, em palco vazio: alvo a 5 m, câmera a 14 m. Os vídeos do jogo ainda são os anteriores, de câmera mais distante.</p>
     <p id="coverage" class="muted"></p>
     
   </header>
@@ -121,6 +124,17 @@
         } else {
           figure.append(element('div', row.canCapture ? 'Aguardando captura' : 'Cast indisponível no caso de captura', 'empty'));
         }
+        pairs.append(figure);
+      }
+      // R2222: terceira coluna, o prefab do Mega tocado como esta (work/r2222/referencia.ps1).
+      {
+        const figure = element('figure', '', 'ref');
+        figure.append(element('figcaption', 'Mega (referência)'));
+        const video = element('video'); video.autoplay = true; video.loop = true; video.muted = true; video.playsInline = true; video.setAttribute('playsinline','');
+        video.preload = 'metadata';
+        video.addEventListener('error', () => video.replaceWith(element('div', 'Sem referência gravada para este ID', 'empty')));
+        video.src = 'skills-ref/' + row.cls + '-' + row.id + '.mp4';
+        figure.append(video);
         pairs.append(figure);
       }
       if (row.mode !== 'candidate' && row.canCapture) {
