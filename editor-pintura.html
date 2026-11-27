@@ -1,0 +1,23 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pintura do mundo corrigida</title>
+<style>:root{--bg:#15181c;--fg:#e6eaee;--mut:#9aa5b1;--card:#1d2127;--line:#2c323a;--ok:#5fbf7a;--warn:#e0b04f;--bad:#e06a5f}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,sans-serif}main{max-width:1400px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:24px;margin:0 0 6px}h2{font-size:20px;margin:28px 0 8px}p{color:var(--mut);margin:6px 0}
+.box{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin:12px 0}
+.ok{color:var(--ok)}.warn{color:var(--warn)}.bad{color:var(--bad)}
+figure{margin:12px 0}figure img{display:block;width:100%;height:auto;border-radius:8px;border:1px solid var(--line)}figcaption{font-size:15px;color:var(--fg);padding:6px 2px}</style></head><body><main>
+<h1>Pintura do mundo corrigida (R2283)</h1>
+<p>27/11, noite. Editor do World Link, build r1210. Em cada foto: esquerda = como o jogo mostrava até hoje; direita = com a correção.</p>
+<div class="box">A pintura à mão e o "suavizar divisa" que você fez no editor C++ estavam gravados no arquivo, mas o jogo procurava na linha errada da tabela. Só 2 setores liam alguma coisa, e Raklion mostrava a pintura da Aida. Agora cada setor lê a própria pintura, e o editor novo mostra igual ao jogo.</div>
+<h2 class="ok">Melhorou</h2>
+<figure><img loading="lazy" src="editor/wlm2-P12.jpg" alt=""><figcaption><b>Raklion (setor 1007):</b> sumiram as manchas verdes quadradas, que eram pintura da Aida aparecendo na neve.</figcaption></figure>
+<figure><img loading="lazy" src="editor/wlm2-P02.jpg" alt=""><figcaption><b>Divisa perto de Lorencia (setor 1019):</b> os degraus viraram transição macia.</figcaption></figure>
+<figure><img loading="lazy" src="editor/wlm2-P03.jpg" alt=""><figcaption><b>Setor 1021:</b> aparece a sua pintura de terra clara.</figcaption></figure>
+<h2 class="warn">Precisa do seu olho</h2>
+<figure><img loading="lazy" src="editor/wlm2-P08.jpg" alt=""><figcaption><b>Tarkan (setor 1053):</b> são traços seus de pincel. A cor fica igual, mas onde passou o pincel a areia perde o relevo da textura, e dá para ver o contorno do traço. Há duas saídas: apagar os traços no editor, ou o jogo manter o relevo quando a textura pintada for a mesma do chão (essa muda o mundo todo).</figcaption></figure>
+<figure><img loading="lazy" src="editor/wlm2-P05.jpg" alt=""><figcaption><b>Canto de Lorencia com o porto:</b> a faixa escura sobre a estrada e a mancha azulada junto da água são traços seus. A linha reta é a borda de Lorencia: o traço continuava para dentro da cidade, mas o chão próprio de Lorencia ainda não recebe pintura, então ele é cortado ali.</figcaption></figure>
+<h2 class="bad">Defeito que vamos corrigir</h2>
+<figure><img loading="lazy" src="editor/wlm2-P09.jpg" alt=""><figcaption><b>Setor 1009 (Devias):</b> a pintura ficou macia, mas sobrou um contorno claro em degraus na borda.</figcaption></figure>
+<figure><img loading="lazy" src="editor/wlm2-P04.jpg" alt=""><figcaption><b>Setor 1011, rio ao sul de Lorencia:</b> a mesma coisa, só que em linhas finas escuras.</figcaption></figure>
+<h2>Sem mudança</h2>
+<figure><img loading="lazy" src="editor/wlm2-P01.jpg" alt=""><figcaption><b>Setor 1028 (Devias):</b> a maior área que você repintou no C++ fica em células sem chão, por isso continua sem aparecer.</figcaption></figure>
+</main></body></html>
