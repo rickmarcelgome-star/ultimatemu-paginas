@@ -1,0 +1,36 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Aida no motor do mundo</title>
+<style>:root{--bg:#15181c;--fg:#e6eaee;--mut:#9aa5b1;--card:#1d2127;--line:#2c323a;--ok:#5fbf7a;--warn:#e0b04f}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,sans-serif}main{max-width:1400px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:24px;margin:0 0 6px}h2{font-size:20px;margin:28px 0 8px}p{color:var(--mut);margin:6px 0}
+.box{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:15px}td,th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left}th{color:var(--mut);font-weight:600}
+.ok{color:var(--ok)}.warn{color:var(--warn)}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:10px}figure{margin:0}figure img{display:block;width:100%;height:auto;border-radius:8px;border:1px solid var(--line)}figcaption{font-size:14px;color:var(--mut);padding:4px 2px}</style></head><body><main>
+<h1>Aida no motor do mundo (R2246)</h1>
+<p>26/11, noite. Build r1166. A Aida deixa de ser uma cena separada: é desenhada pelo mesmo motor da estrada, e a borda vira só um número para o servidor.</p>
+<div class="box">
+<table>
+<tr><th></th><th>Antes (cena do Mega)</th><th>Agora (motor do mundo)</th></tr>
+<tr><td>Travada na borda</td><td>71–123 ms</td><td class="ok">até 21 ms (normal)</td></tr>
+<tr><td>O que troca na borda</td><td>sol, tom do chão, céu, luz da cena</td><td class="ok">nada</td></tr>
+<tr><td>Salto de brilho na troca</td><td>até 126%</td><td class="ok">−2,5% a +7%, dentro da variação normal andando</td></tr>
+<tr><td>Cidade por dentro</td><td>referência</td><td>mesmas construções, luzes e névoa; brilho 1,05× (dia), 1,01× (entardecer), 1,15× (noite)</td></tr>
+</table>
+</div>
+<div class="box"><b class="warn">Ainda falta:</b> chão sem a sombra do sol e um pouco menos avermelhado; alguns arbustos mais pálidos; noite 15% mais clara; morros em volta mais claros; céu final não conferido; ao entrar direto (login/teleporte) aparece o chão antigo por meio segundo. Não testado ainda: combate, NPCs, montaria, carroça, portais internos, minimapa.</div>
+<h2>Dentro da cidade: original (esquerda) × convertida (direita)</h2>
+<div class="g">
+<figure><img loading="lazy" src="aida/mundo-dentro-h12.0.jpg" alt="Dia"><figcaption>Dia (12h)</figcaption></figure>
+<figure><img loading="lazy" src="aida/mundo-dentro-h17.5.jpg" alt="Entardecer"><figcaption>Entardecer (17h30)</figcaption></figure>
+<figure><img loading="lazy" src="aida/mundo-dentro-h23.0.jpg" alt="Noite"><figcaption>Noite (23h)</figcaption></figure>
+</div>
+<h2>Na borda (convertida)</h2>
+<div class="g">
+<figure><img loading="lazy" src="aida/mundo-borda-01-h12.0-antes-dentro.jpg" alt=""><figcaption>Saindo: último quadro dentro</figcaption></figure>
+<figure><img loading="lazy" src="aida/mundo-borda-01-h12.0-meio-alfa00.jpg" alt=""><figcaption>Saindo: já na estrada</figcaption></figure>
+<figure><img loading="lazy" src="aida/mundo-borda-02-h12.0-antes-estrada.jpg" alt=""><figcaption>Entrando: último quadro na estrada</figcaption></figure>
+<figure><img loading="lazy" src="aida/mundo-borda-02-h12.0-meio-alfa00.jpg" alt=""><figcaption>Entrando: já dentro</figcaption></figure>
+</div>
+<h2>Céu da Aida por modo (nuvens do Mega de volta)</h2>
+<figure><img loading="lazy" src="aida/ceu-r2247.jpg" alt="Céu"><figcaption>Linhas: original, dia, entardecer, noite</figcaption></figure>
+</main></body></html>
