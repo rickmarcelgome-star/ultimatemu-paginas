@@ -1,0 +1,235 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Guia do editor</title>
+<style>
+:root{--bg:#15181c;--fg:#e6eaee;--mut:#9aa5b1;--card:#1d2127;--line:#2c323a;--ok:#5fbf7a;--warn:#e0b04f;--bad:#e06a5f;--gold:#e6c26a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,sans-serif}
+main{max-width:1180px;margin:0 auto;padding:20px 16px 70px}
+h1{font-size:25px;margin:0 0 6px}h2{font-size:21px;margin:34px 0 10px;padding-top:6px;border-top:1px solid var(--line)}h3{font-size:17px;margin:20px 0 6px;color:var(--gold)}
+p{color:var(--mut);margin:6px 0}li{margin:3px 0}
+b,strong{color:var(--fg)}
+nav.toc{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 4px}
+nav.toc a{background:#262b33;color:#cfd6de;border:1px solid var(--line);border-radius:16px;padding:5px 12px;text-decoration:none;font-size:14px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin:12px 0}
+kbd{display:inline-block;background:#262b33;border:1px solid #3a414b;border-bottom-width:2px;border-radius:4px;padding:0 6px;font:13px/1.6 ui-monospace,Consolas,monospace;color:#f0f3f6;white-space:nowrap}
+figure{margin:14px 0}
+figure img{display:block;width:100%;height:auto;border-radius:8px;border:1px solid var(--line)}
+figcaption{font-size:15px;color:var(--fg);padding:6px 2px}
+.shot{position:relative;border-radius:8px;overflow:hidden;border:1px solid var(--line)}
+.shot img{display:block;width:100%;height:auto;border:0;border-radius:0}
+.pin{position:absolute;transform:translate(-50%,-50%);width:26px;height:26px;border-radius:50%;background:#e8a23a;color:#111;font:700 14px/26px system-ui,sans-serif;text-align:center;box-shadow:0 0 0 2px #111,0 2px 6px #000a}
+@media (max-width:640px){.pin{width:18px;height:18px;font-size:11px;line-height:18px}}
+ol.legend{columns:2;column-gap:28px;padding-left:22px}
+@media (max-width:760px){ol.legend{columns:1}}
+ol.legend li::marker{color:#e8a23a;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px}
+.grid figure{margin:0}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+th{color:var(--gold);font-weight:600}
+.tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.steps{counter-reset:s;list-style:none;padding:0}
+.steps>li{counter-increment:s;position:relative;padding:10px 12px 10px 52px;margin:10px 0;background:var(--card);border:1px solid var(--line);border-radius:8px}
+.steps>li::before{content:counter(s);position:absolute;left:12px;top:10px;width:28px;height:28px;border-radius:50%;background:#3a6fd8;color:#fff;font-weight:700;text-align:center;line-height:28px}
+.tag{display:inline-block;font-size:12px;padding:1px 8px;border-radius:10px;background:#262b33;border:1px solid var(--line);color:var(--mut);margin-left:6px}
+</style></head><body><main>
+<h1>Guia do editor do mundo</h1>
+<p>Como usar o editor que agora fica dentro do jogo: o World Link inteiro e, pelo botão <b>Mapas ▾</b>, os mapas que ficam fora dele (Atlans, Kalima, Loren Market…). O que você faz aqui é o que o jogo mostra.</p>
+<nav class="toc"><a href="#abrir">Abrir</a><a href="#tela">A tela</a><a href="#andar">Andar pela câmera</a><a href="#dez">Primeiros 10 minutos</a><a href="#altura">Altura</a><a href="#textura">Textura</a><a href="#recursos">Recursos</a><a href="#objetos">Objetos</a><a href="#atributos">Atributos</a><a href="#travessia">Cidade e travessia</a><a href="#criar">Criar</a><a href="#luz">Luz</a><a href="#mapas">Mapa individual</a><a href="#atalhos">Atalhos</a><a href="#arquivos">Arquivos</a></nav>
+
+<h2 id="abrir">1. Abrir o editor</h2>
+<div class="box">
+<ul>
+<li><b>World Link:</b> dois cliques em <b>ABRIR-EDITOR-WORLD-LINK.cmd</b>. O mundo leva uns 30 segundos para carregar.</li>
+<li><b>Um mapa fora do World Link</b> (Atlans, Kalima, Loren Market, Doppelganger…): use <b>ABRIR-EDITOR-MAPA.cmd</b> e digite o número do mapa. Também dá para trocar de dentro do editor, pelo botão <b>Mapas ▾</b>.</li>
+<li>O editor não precisa de login e não mexe no servidor.</li>
+</ul>
+</div>
+
+<h2 id="tela">2. A tela</h2>
+<div class="shot"><img loading="lazy" src="editor-guia/tela.jpg" alt="Tela do editor com as janelas Ferramentas e Recursos abertas">
+<span class="pin" style="left:2.9%;top:2.4%">1</span>
+<span class="pin" style="left:11.6%;top:2.4%">2</span>
+<span class="pin" style="left:20.2%;top:2.4%">3</span>
+<span class="pin" style="left:26.6%;top:2.4%">4</span>
+<span class="pin" style="left:40%;top:2.4%">5</span>
+<span class="pin" style="left:95%;top:2.4%">6</span>
+<span class="pin" style="left:9%;top:6%">7</span>
+<span class="pin" style="left:33.8%;top:6%">8</span>
+<span class="pin" style="left:59.1%;top:6%">9</span>
+<span class="pin" style="left:72%;top:6%">10</span>
+<span class="pin" style="left:22.6%;top:9.2%">11</span>
+<span class="pin" style="left:11.7%;top:19.4%">12</span>
+<span class="pin" style="left:11.7%;top:28.8%">13</span>
+<span class="pin" style="left:11.7%;top:40%">14</span>
+<span class="pin" style="left:80%;top:13.9%">15</span>
+<span class="pin" style="left:83%;top:22%">16</span>
+<span class="pin" style="left:68.5%;top:40.3%">17</span>
+<span class="pin" style="left:90%;top:62%">18</span>
+<span class="pin" style="left:31%;top:98.6%">19</span>
+</div>
+<ol class="legend">
+<li><b>Salvar</b> (<kbd>Ctrl+S</kbd>). Fica dourado e com <b>*</b> quando há alteração não salva.</li>
+<li><b>Desfazer / Refazer</b> (<kbd>Ctrl+Z</kbd> / <kbd>Ctrl+Y</kbd>). Um passo por pincelada.</li>
+<li><b>Ajuda F1</b>: a lista de todos os atalhos, com busca.</li>
+<li><b>Mapas ▾</b>: abre um mapa fora do World Link (ou volta ao World Link).</li>
+<li>Posição do cursor (X, Y), altura do chão e FPS.</li>
+<li>Arquivo que está sendo editado (com <b>*</b> quando falta salvar).</li>
+<li>Lista das cidades: escolha uma e a câmera vai até ela.</li>
+<li><b>Selecionar · Mundo · Editar · Mover · Ponto − · Ponto +</b>: cidade e travessia (ver seção 9).</li>
+<li><b>Recursos</b>: abre e fecha a janela de texturas e objetos (<kbd>Tab</kbd>).</li>
+<li>Ferramenta ativa.</li>
+<li>Linha de estado: modo, o que está sob o cursor (cidade, setor, divisa, travessia, “Mapa Atlans (individual)”) e o último aviso.</li>
+<li><b>FERRAMENTAS</b>: abas Exibir, Altura, Textura, Criar, Objetos, Atributos e Luz.</li>
+<li><b>Tamanho, Dureza e Força</b> do pincel (<kbd>[</kbd> <kbd>]</kbd> mudam o tamanho; <kbd>-</kbd> <kbd>=</kbd> a força).</li>
+<li>Botões da aba aberta (aqui, a aba Textura). O texto embaixo explica a ferramenta escolhida.</li>
+<li><b>RECURSOS</b>: abas Texturas e Objetos.</li>
+<li><b>Categorias</b> (Grama, Terra, Areia, Pedra, Neve, Musgo, Prado, Pântano, Gelo…). <b>Transição</b> é um filtro extra que combina com a categoria.</li>
+<li><b>Cidade</b>: de qual cidade vêm as texturas/objetos. Qualquer cidade serve em qualquer lugar.</li>
+<li>As cartas: clique numa para usar. A de borda clara é a ativa.</li>
+<li>Linha de ajuda com os atalhos principais.</li>
+</ol>
+
+<h2 id="andar">3. Andar pela câmera</h2>
+<div class="tablewrap"><table>
+<tr><th>Mouse / tecla</th><th>O que faz</th></tr>
+<tr><td>Botão <b>direito</b> + arrastar</td><td>Gira a câmera em volta do ponto do centro, como no editor do C++ (arrastar para a direita gira para o mesmo lado do C++).</td></tr>
+<tr><td>Botão do <b>meio</b> + arrastar</td><td>Arrasta o mapa.</td></tr>
+<tr><td>Clique do <b>meio</b> (sem arrastar)</td><td>Seleciona a área sob o cursor: cidade, setor ou travessia.</td></tr>
+<tr><td><b>Roda</b></td><td>Aproxima ou afasta (10% por entalhe).</td></tr>
+<tr><td><kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd></td><td>Anda com a câmera.</td></tr>
+<tr><td><kbd>Home</kbd></td><td>Mundo inteiro. No mapa individual, o mapa inteiro.</td></tr>
+<tr><td><kbd>F6</kbd> / <kbd>F7</kbd></td><td>Cidade anterior / próxima.</td></tr>
+<tr><td><kbd>F8</kbd></td><td>Próxima travessia.</td></tr>
+<tr><td><kbd>F5</kbd></td><td>Volta ao ponto inicial.</td></tr>
+<tr><td><kbd>F2</kbd> · <kbd>F3</kbd></td><td>Muda o céu (dia, entardecer, noite, automático) · liga/desliga a neblina (só no editor).</td></tr>
+</table></div>
+<figure><img loading="lazy" src="editor-guia/girar.jpg" alt=""><figcaption>Depois de arrastar 200 pixels para a direita com o botão direito: a câmera girou −2,0 rad, o mesmo valor que o editor C++ daria.</figcaption></figure>
+
+<h2 id="dez">4. Primeiros 10 minutos</h2>
+<ol class="steps">
+<li><b>Abra</b> o <b>ABRIR-EDITOR-WORLD-LINK.cmd</b> e espere o mundo aparecer.</li>
+<li><b>Olhe em volta:</b> botão direito gira, botão do meio arrasta, a roda aproxima. <kbd>Home</kbd> mostra tudo.</li>
+<li><b>Vá até uma cidade:</b> escolha na lista do canto (7) ou use <kbd>F6</kbd>/<kbd>F7</kbd>. Aproxime com a roda.</li>
+<li><b>Suba um morro:</b> FERRAMENTAS → <b>Altura</b> → <b>Subir [2]</b>. Clique e arraste no chão. <kbd>Shift</kbd> desce. Para um monte pronto, use <b>Montanha [M]</b> e segure o botão.</li>
+<li><b>Pinte:</b> FERRAMENTAS → <b>Textura</b> → <b>Pintar textura [6]</b> → <b>Paleta [Tab]</b>. Escolha a categoria, a cidade de origem e clique numa carta. Arraste no chão.</li>
+<li><b>Errou?</b> <kbd>Ctrl+Z</kbd> desfaz a última pincelada (um passo por traço).</li>
+<li><b>Ponha um objeto:</b> <kbd>8</kbd> (Objetos) → <b>Escolher modelo…</b> → escolha a cidade e a categoria (Árvores, Casas…) → clique na carta e depois no chão.</li>
+<li><b>Salve</b> com <kbd>Ctrl+S</kbd>. O botão Salvar deixa de ficar dourado.</li>
+<li><b>Veja no jogo:</b> feche o editor e entre no jogo normal. O jogo lê o mesmo arquivo (seção 14) e mostra a altura, a pintura e os objetos.</li>
+<li><b>Mapa fora do World Link:</b> <b>Mapas ▾</b> → <b>Atlans</b>. O editor reabre sozinho no Atlans. Para voltar: <b>Mapas ▾</b> → <b>« Voltar ao World Link</b>.</li>
+</ol>
+
+<h2 id="altura">5. Altura e Esculpir</h2>
+<figure><img loading="lazy" src="editor-guia/altura.jpg" alt=""><figcaption><b>Aba Altura.</b> Subir <kbd>2</kbd>, Descer <kbd>3</kbd>, Suavizar <kbd>4</kbd> e Nivelar <kbd>5</kbd> trabalham por pincelada. Montanha <kbd>M</kbd>, Colina <kbd>C</kbd>, Planalto <kbd>P</kbd> e Crista <kbd>K</kbd> crescem enquanto você segura o botão. O diálogo ao lado ajusta altura-alvo, ruído e saia. <kbd>Shift</kbd> inverte. “Recalcular luz do setor” refaz a sombra do chão pela altura nova.</figcaption></figure>
+
+<h2 id="textura">6. Textura</h2>
+<div class="grid">
+<figure><img loading="lazy" src="editor-guia/textura-setor.jpg" alt=""><figcaption><b>Pintar textura [6]</b> com uma textura de <b>Kanturu</b> num setor perto de Lorencia. A carta ativa aparece em “Ativa”.</figcaption></figure>
+<figure><img loading="lazy" src="editor-guia/textura-cidade-mega.jpg" alt=""><figcaption>Uma textura de <b>Lorencia</b> pintada <b>dentro de Aida</b> (cidade Mega). A textura de fora ganha uma fatia livre do atlas da cidade, e o jogo faz o mesmo.</figcaption></figure>
+</div>
+<ul>
+<li><b>Camada 1</b> troca a textura de base da célula. <b>Camada 2</b> pinta a de cima, com transparência nos cantos.</li>
+<li><b>Pintar textura [6]</b> é a pintura fina, com borda macia. <b>Apagar pintura [7]</b> volta ao chão original.</li>
+<li><b>Suavizar (desfocar) [9]</b> mistura a pintura. <b>Suavizar divisa [0]</b> arruma a emenda entre duas áreas. <b>Todas as divisas</b> faz isso no escopo escolhido: clique em <b>Prévia</b> e depois em <b>Aplicar</b>.</li>
+<li><b>Conta-gotas</b>: <kbd>I</kbd> ou <kbd>Alt</kbd>+clique pega a textura do chão. <kbd>PgUp</kbd>/<kbd>PgDn</kbd> passam a textura.</li>
+<li>Nas ruas das cidades Mega o pincel troca a textura de cima <b>na hora</b>, como no C++, e as bordas ficam macias, sem os quadradinhos de antes.</li>
+</ul>
+<figure><img loading="lazy" src="editor-guia/todas-divisas.jpg" alt=""><figcaption><b>Todas as divisas</b>: largura de cada lado, escopo, Prévia, Aplicar e Fechar.</figcaption></figure>
+
+<h2 id="recursos">7. Recursos: texturas e objetos de qualquer cidade</h2>
+<div class="grid">
+<figure><img loading="lazy" src="editor-guia/recursos-texturas.jpg" alt=""><figcaption><b>Texturas</b> filtradas por <b>Grama</b>. O número ao lado de cada categoria é quantas texturas há nela.</figcaption></figure>
+<figure><img loading="lazy" src="editor-guia/recursos-objetos.jpg" alt=""><figcaption><b>Objetos</b> de <b>Aida</b> na categoria <b>Árvores</b>, com miniatura. Clique na carta e depois no chão.</figcaption></figure>
+</div>
+<p>A mesma textura pode aparecer em mais de uma categoria (por exemplo, uma mistura de grama com pedra aparece em Prado e em Pedra). <b>Transição</b> é um filtro extra: ligado, mostra só as misturas da categoria escolhida.</p>
+
+<h2 id="objetos">8. Objetos</h2>
+<div class="grid">
+<figure><img loading="lazy" src="editor-guia/objeto-colocado.jpg" alt=""><figcaption>Uma árvore de <b>Aida</b> colocada num setor perto de Lorencia.</figcaption></figure>
+<figure><img loading="lazy" src="editor-guia/espalhar.jpg" alt=""><figcaption><b>Espalhar [B]</b>: Raio, Por carimbo, Espaço, Variação e Giro. Clique nas cartas para marcar os modelos e depois clique ou arraste no chão. <kbd>Shift</kbd> + arrastar apaga no disco.</figcaption></figure>
+</div>
+<ul>
+<li>Clique seleciona e arrasta. <kbd>G</kbd> move, <kbd>R</kbd>/<kbd>Shift+R</kbd> giram 15°, <kbd>T</kbd>/<kbd>Shift+T</kbd> mudam a escala, <kbd>Ctrl+D</kbd> duplica, <kbd>J</kbd> assenta no chão, <kbd>Del</kbd> oculta, <kbd>Ins</kbd> mostra, <kbd>Esc</kbd> cancela.</li>
+<li>Os objetos seguem o chão quando você sobe ou desce o terreno embaixo deles.</li>
+</ul>
+
+<h2 id="atributos">9. Atributos (onde se anda, área segura, PvP)</h2>
+<figure><img loading="lazy" src="editor-guia/atributos.jpg" alt=""><figcaption><b>Atributos / Borracha Geral</b>: escolha <b>Safe</b>, <b>PvP</b>, <b>Bloq</b>, <b>Clear</b> ou <b>Auto</b> e arraste. A grade colorida mostra os tiles. <b>Borracha Geral</b> volta ao original os canais marcados (Altura, Textura, Objetos, ATT). <b>Proteção</b> ligada não deixa a borracha mexer em estradas, cidades e ATT manual (<kbd>Alt</kbd> força).</figcaption></figure>
+<div class="box"><b>Exportar para o servidor</b> só grava os arquivos numa pasta do seu PC (com um LEIA-ME). Nada vai para o servidor sozinho: instalar é decisão sua. Salve antes de exportar.</div>
+
+<h2 id="travessia">10. Cidade e travessia</h2>
+<div class="grid">
+<figure><img loading="lazy" src="editor-guia/travessia.jpg" alt=""><figcaption><kbd>F8</kbd> escolhe a travessia, <kbd>E</kbd> entra em Editar e você arrasta os pontos. <b>Ponto −</b>/<b>Ponto +</b> tiram e põem pontos. PgUp/PgDn mudam a cota do ponto.</figcaption></figure>
+<figure><img loading="lazy" src="editor-guia/mover.jpg" alt=""><figcaption><b>Mover cidade</b>: clique do meio na cidade, <kbd>G</kbd> e arraste. As travessias ligadas se deformam junto. <kbd>Esc</kbd> cancela; <b>Desfazer</b> volta.</figcaption></figure>
+</div>
+<div class="box"><b>Atenção:</b> cidade movida não vai para o servidor. A colisão do servidor continua a antiga, e a exportação fica recusada enquanto houver cidade fora do lugar.</div>
+
+<h2 id="criar">11. Criar terreno</h2>
+<figure><img loading="lazy" src="editor-guia/criar.jpg" alt=""><figcaption><b>Criar → Pintar terreno novo</b>: clique ou arraste onde não há chão, encostado num setor. A altura casa com os vizinhos. O diálogo tem <b>Criar setor aqui</b>, <b>Revelar terreno</b>, o bioma do setor e o grupo da cidade.</figcaption></figure>
+
+<h2 id="luz">12. Luz do chão</h2>
+<figure><img loading="lazy" src="editor-guia/luz.jpg" alt=""><figcaption><b>Luz</b>: desligue a <b>Trava da divisa</b> para usar o <b>Pincel de cor [L]</b> no World Link. <kbd>Alt</kbd>+clique pega a cor do chão; <kbd>Shift</kbd> afasta da cor. Clique do meio num setor e <b>Recalcular luz do setor</b> (<kbd>Ctrl+L</kbd>) refaz a sombra pela altura atual.</figcaption></figure>
+<p>A luz é só do chão. Personagens, monstros e NPCs não mudam de cor por causa dela.</p>
+
+<h2 id="mapas">13. Mapa individual (fora do World Link)</h2>
+<div class="grid">
+<figure><img loading="lazy" src="editor-guia/menu-mapas.jpg" alt=""><figcaption><b>Mapas ▾</b>: a lista dos mapas que abrem sozinhos (cena Mega ou mapa do C++). “editado” quer dizer que já há arquivo daquele mapa.</figcaption></figure>
+<figure><img loading="lazy" src="editor-guia/mapa-atlans.jpg" alt=""><figcaption><b>Atlans</b> aberto sozinho. O rodapé mostra “Mapa Atlans (individual)” e o painel <b>MAPA INDIVIDUAL</b> mostra as texturas do próprio mapa.</figcaption></figure>
+</div>
+<div class="shot"><img loading="lazy" src="editor-guia/mapa-market.jpg" alt="Loren Market com a luz do mapa">
+<span class="pin" style="left:12%;top:14%">1</span>
+<span class="pin" style="left:35%;top:14.7%">2</span>
+<span class="pin" style="left:59%;top:14.7%">3</span>
+<span class="pin" style="left:59%;top:33%">4</span>
+</div>
+<ol class="legend">
+<li>FERRAMENTAS na aba Luz.</li>
+<li>Pincel de cor: raio, força, dureza, a cor e amostras. <b>Recalcular luz</b> refaz a luz deste mapa.</li>
+<li>MAPA INDIVIDUAL: nome, tipo e arquivo do mapa.</li>
+<li>Texturas deste mapa: clique numa fatia para pintar com ela. Uma textura de outra cidade (pela Paleta) vai para uma fatia livre.</li>
+</ol>
+<ul>
+<li>Valem: <b>Altura e Esculpir</b>, <b>Pintar/Apagar/Camada 1/Camada 2</b>, <b>Objetos e Espalhar</b>, <b>ATT do mapa</b> (Exibir → Outras ferramentas; exporta só no seu PC) e <b>Luz</b> (pincel de cor e recalcular).</li>
+<li>Ficam desligadas, porque são só do World Link: Criar, Atributos do World Link, Travessia/Mover e as divisas.</li>
+<li>No mapa do C++ (Loren Market, Doppelganger, Lobby) a luz do chão acompanha a altura sozinha, como no jogo. Na cena Mega (Atlans, Kalima…) use <b>Recalcular luz</b> depois de mexer na altura.</li>
+<li>Cada mapa tem o próprio arquivo (seção 14). O arquivo do World Link nunca é tocado nesse modo.</li>
+</ul>
+
+<h2 id="atalhos">14. Atalhos</h2>
+<div class="tablewrap"><table>
+<tr><th>Tecla</th><th>O que faz</th></tr>
+<tr><td><kbd>1</kbd> a <kbd>7</kbd></td><td>Câmera, Subir, Descer, Suavizar, Nivelar, Pintar, Apagar pintura</td></tr>
+<tr><td><kbd>8</kbd> · <kbd>F11</kbd></td><td>Objetos</td></tr>
+<tr><td><kbd>9</kbd> · <kbd>0</kbd></td><td>Desfocar · Suavizar divisa</td></tr>
+<tr><td><kbd>M</kbd> <kbd>C</kbd> <kbd>P</kbd> <kbd>K</kbd></td><td>Esculpir: Montanha, Colina, Planalto, Crista</td></tr>
+<tr><td><kbd>B</kbd></td><td>Espalhar objetos</td></tr>
+<tr><td><kbd>L</kbd> · <kbd>Ctrl+L</kbd></td><td>Pincel de cor · Recalcular luz</td></tr>
+<tr><td><kbd>[</kbd> <kbd>]</kbd></td><td>Tamanho do pincel</td></tr>
+<tr><td><kbd>-</kbd> <kbd>=</kbd></td><td>Força do pincel</td></tr>
+<tr><td><kbd>Shift</kbd></td><td>Inverte o pincel (desce, apaga, afasta da cor)</td></tr>
+<tr><td><kbd>Alt</kbd>+clique · <kbd>I</kbd></td><td>Conta-gotas</td></tr>
+<tr><td><kbd>PgUp</kbd> <kbd>PgDn</kbd></td><td>Textura anterior/próxima</td></tr>
+<tr><td><kbd>Tab</kbd></td><td>Abre/fecha Recursos</td></tr>
+<tr><td><kbd>N</kbd> · <kbd>Shift+N</kbd></td><td>Nomes das cidades · contorno da seleção e travessias</td></tr>
+<tr><td><kbd>Home</kbd> · <kbd>F5</kbd></td><td>Mundo (ou mapa) inteiro · ponto inicial</td></tr>
+<tr><td><kbd>F6</kbd> <kbd>F7</kbd> · <kbd>F8</kbd></td><td>Cidade anterior/próxima · próxima travessia</td></tr>
+<tr><td><kbd>F9</kbd></td><td>Mostra/oculta os objetos da área</td></tr>
+<tr><td><kbd>F1</kbd> · <kbd>F2</kbd> · <kbd>F3</kbd></td><td>Atalhos · céu · neblina</td></tr>
+<tr><td><kbd>Espaço</kbd> <kbd>E</kbd> <kbd>G</kbd></td><td>Cidade/travessia: Selecionar, Editar, Mover</td></tr>
+<tr><td>Setas · <kbd>Shift</kbd>+setas</td><td>Move a seleção 1 ou 10 tiles</td></tr>
+<tr><td><kbd>G</kbd> <kbd>R</kbd> <kbd>T</kbd> <kbd>J</kbd> <kbd>Del</kbd> <kbd>Ins</kbd> <kbd>Ctrl+D</kbd></td><td>Objetos: mover, girar, escala, assentar, ocultar, mostrar, duplicar</td></tr>
+<tr><td><kbd>Ctrl+S</kbd> <kbd>Ctrl+Z</kbd> <kbd>Ctrl+Y</kbd></td><td>Salvar, desfazer, refazer</td></tr>
+<tr><td><kbd>Ctrl+=</kbd> <kbd>Ctrl+-</kbd></td><td>Aumenta/diminui a interface (100% a 200%)</td></tr>
+<tr><td><kbd>Esc</kbd></td><td>Cancela o gesto e volta a Selecionar</td></tr>
+</table></div>
+<figure><img loading="lazy" src="editor-guia/ajuda-f1.jpg" alt=""><figcaption><kbd>F1</kbd> abre esta lista dentro do editor, com busca.</figcaption></figure>
+
+<h2 id="arquivos">15. Onde ficam os arquivos</h2>
+<div class="box">
+<ul>
+<li><b>World Link:</b> <code>Documentos\UltimateMU-Mundo\mundo-r2280.wle</code>. Cada vez que você salva, a versão anterior vai para <code>UltimateMU-Mundo\copias</code> (ficam as 30 últimas).</li>
+<li><b>Mapas individuais:</b> <code>Documentos\UltimateMU-Mundo\mapas\mapa-&lt;número&gt;.wle</code> (um por mapa).</li>
+<li>O jogo lê esses arquivos sozinho. Sem eles, o jogo fica como era.</li>
+</ul>
+</div>
+</main></body></html>
