@@ -63,7 +63,7 @@ th{color:var(--gold);font-weight:600}
 <span class="pin" style="left:11.7%;top:40%">14</span>
 <span class="pin" style="left:80%;top:13.9%">15</span>
 <span class="pin" style="left:83%;top:22%">16</span>
-<span class="pin" style="left:68.5%;top:40.3%">17</span>
+<span class="pin" style="left:77%;top:35.8%">17</span>
 <span class="pin" style="left:90%;top:62%">18</span>
 <span class="pin" style="left:31%;top:98.6%">19</span>
 </div>
@@ -138,7 +138,7 @@ th{color:var(--gold);font-weight:600}
 
 <h2 id="recursos">7. Recursos: texturas e objetos de qualquer cidade</h2>
 <div class="grid">
-<figure><img loading="lazy" src="editor-guia/recursos-texturas.jpg" alt=""><figcaption><b>Texturas</b> filtradas por <b>Grama</b>. O número ao lado de cada categoria é quantas texturas há nela.</figcaption></figure>
+<figure><img loading="lazy" src="editor-guia/recursos-texturas.jpg" alt=""><figcaption><b>Grama</b> com o filtro <b>Transição</b> ligado: só as misturas que têm grama. O número ao lado de cada categoria é quantas texturas há nela.</figcaption></figure>
 <figure><img loading="lazy" src="editor-guia/recursos-objetos.jpg" alt=""><figcaption><b>Objetos</b> de <b>Aida</b> na categoria <b>Árvores</b>, com miniatura. Clique na carta e depois no chão.</figcaption></figure>
 </div>
 <p>A mesma textura pode aparecer em mais de uma categoria (por exemplo, uma mistura de grama com pedra aparece em Prado e em Pedra). <b>Transição</b> é um filtro extra: ligado, mostra só as misturas da categoria escolhida.</p>
@@ -165,7 +165,7 @@ th{color:var(--gold);font-weight:600}
 <div class="box"><b>Atenção:</b> cidade movida não vai para o servidor. A colisão do servidor continua a antiga, e a exportação fica recusada enquanto houver cidade fora do lugar.</div>
 
 <h2 id="criar">11. Criar terreno</h2>
-<figure><img loading="lazy" src="editor-guia/criar.jpg" alt=""><figcaption><b>Criar → Pintar terreno novo</b>: clique ou arraste onde não há chão, encostado num setor. A altura casa com os vizinhos. O diálogo tem <b>Criar setor aqui</b>, <b>Revelar terreno</b>, o bioma do setor e o grupo da cidade.</figcaption></figure>
+<figure><img loading="lazy" src="editor-guia/criar.jpg" alt=""><figcaption><b>Criar</b>: num buraco do mapa, <b>Criar setor aqui</b> faz um setor novo inteiro (aqui, o setor 1079 ao sul de Lorencia). <b>Pintar terreno novo</b> preenche as células vazias de um setor que já existe; a altura casa com os vizinhos. O diálogo também tem <b>Revelar terreno</b>, o bioma do setor e o grupo da cidade. Criar um setor já grava o arquivo.</figcaption></figure>
 
 <h2 id="luz">12. Luz do chão</h2>
 <figure><img loading="lazy" src="editor-guia/luz.jpg" alt=""><figcaption><b>Luz</b>: desligue a <b>Trava da divisa</b> para usar o <b>Pincel de cor [L]</b> no World Link. <kbd>Alt</kbd>+clique pega a cor do chão; <kbd>Shift</kbd> afasta da cor. Clique do meio num setor e <b>Recalcular luz do setor</b> (<kbd>Ctrl+L</kbd>) refaz a sombra pela altura atual.</figcaption></figure>
@@ -174,19 +174,23 @@ th{color:var(--gold);font-weight:600}
 <h2 id="mapas">13. Mapa individual (fora do World Link)</h2>
 <div class="grid">
 <figure><img loading="lazy" src="editor-guia/menu-mapas.jpg" alt=""><figcaption><b>Mapas ▾</b>: a lista dos mapas que abrem sozinhos (cena Mega ou mapa do C++). “editado” quer dizer que já há arquivo daquele mapa.</figcaption></figure>
-<figure><img loading="lazy" src="editor-guia/mapa-atlans.jpg" alt=""><figcaption><b>Atlans</b> aberto sozinho. O rodapé mostra “Mapa Atlans (individual)” e o painel <b>MAPA INDIVIDUAL</b> mostra as texturas do próprio mapa.</figcaption></figure>
+<figure><img loading="lazy" src="editor-guia/mapa-atlans.jpg" alt=""><figcaption><b>Atlans</b> aberto sozinho. A linha de estado mostra “Cursor: Mapa Atlans (individual)” e o painel <b>MAPA INDIVIDUAL</b> mostra as texturas do próprio mapa. Em “Outras ferramentas” fica o <b>ATT do mapa</b>.</figcaption></figure>
 </div>
 <div class="shot"><img loading="lazy" src="editor-guia/mapa-market.jpg" alt="Loren Market com a luz do mapa">
 <span class="pin" style="left:12%;top:14%">1</span>
 <span class="pin" style="left:35%;top:14.7%">2</span>
 <span class="pin" style="left:59%;top:14.7%">3</span>
 <span class="pin" style="left:59%;top:33%">4</span>
+<span class="pin" style="left:56%;top:75.5%">5</span>
+<span class="pin" style="left:26%;top:94.7%">6</span>
 </div>
 <ol class="legend">
 <li>FERRAMENTAS na aba Luz.</li>
 <li>Pincel de cor: raio, força, dureza, a cor e amostras. <b>Recalcular luz</b> refaz a luz deste mapa.</li>
 <li>MAPA INDIVIDUAL: nome, tipo e arquivo do mapa.</li>
 <li>Texturas deste mapa: clique numa fatia para pintar com ela. Uma textura de outra cidade (pela Paleta) vai para uma fatia livre.</li>
+<li>Luz pintada de azul com o Pincel de cor. O jogo mostra igual: a luz fica gravada no arquivo do mapa.</li>
+<li>Aviso da última ação.</li>
 </ol>
 <ul>
 <li>Valem: <b>Altura e Esculpir</b>, <b>Pintar/Apagar/Camada 1/Camada 2</b>, <b>Objetos e Espalhar</b>, <b>ATT do mapa</b> (Exibir → Outras ferramentas; exporta só no seu PC) e <b>Luz</b> (pincel de cor e recalcular).</li>
